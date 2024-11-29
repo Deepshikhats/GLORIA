@@ -25,6 +25,7 @@ const AdmitStudentConfirmation: React.FC<AdmitStudentConfirmationProps> = ({
    * @description on admitting student , navigate to student details to update details
    */
   const handleAdmitStudent = () => {
+    console.log("Admitted state", admittedState)
     if (!admittedState.state) {
       setIsFormSubmitting(true);
       admitStudents(admittedState.id)
