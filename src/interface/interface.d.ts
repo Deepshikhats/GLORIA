@@ -98,9 +98,13 @@ interface IUserDetails {
   work_location: string;
   password_changed: boolean;
 }
+interface OptionType {
+  label: string;
+  value: string;
+}
 interface IAddCollege {
   college_name: string;
-  course_name: string;
+  course_name: string[];
   college_location: string;
   course_description: string;
   brochure: File | null;
