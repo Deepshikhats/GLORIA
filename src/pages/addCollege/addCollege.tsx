@@ -13,6 +13,7 @@ import { Formik, FormikHelpers } from 'formik';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+
 /**
  * @namespace {AddCollege}
  * @description renders add course-college form
@@ -133,7 +134,7 @@ const AddCollege: React.FC = (): React.JSX.Element => {
             />
 
             <Input
-              label="Course Name*"
+              label="Course's Name*"
               name="course_name"
               placeholder="course Name"
               labelPlacement="outside"
