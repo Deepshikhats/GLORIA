@@ -1,8 +1,10 @@
+import AsyncSelect from '@/components/asyncSelect';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import TextArea from '@/components/textArea';
 import {
   GetCourseDetails,
+  ListCourses,
   RegisterCollege,
   UpdateCollege,
 } from '@/services/collegeService';
@@ -26,13 +28,15 @@ const AddCollege: React.FC = (): React.JSX.Element => {
   useEffect(() => {
     if (params?.id) {
       GetCourseDetails(params.id).then((data) => {
-        setCourseDetails(data);
+        console.log(data);
+
+        // setCourseDetails(data);
       });
     }
     return () =>
       setCourseDetails({
         college_name: '',
-        course_name: '',
+        course_name: [],
         college_location: '',
         course_description: '',
         brochure: null,
@@ -53,8 +57,14 @@ const AddCollege: React.FC = (): React.JSX.Element => {
     const formData = new FormData();
     Object.keys(values).forEach((key) => {
       if (key === 'brochure' && values[key] === null) return;
-      //@ts-ignore
-      formData.append(key, values?.[key]);
+      else if (key === 'course_name') {
+        values.course_name.forEach((course) =>
+          formData.append('course_name', course)
+        );
+      } else {
+        //@ts-ignore
+        formData.append(key, values?.[key]);
+      }
     });
 
     const fun = params?.id ? UpdateCollege : RegisterCollege;
@@ -83,6 +93,22 @@ const AddCollege: React.FC = (): React.JSX.Element => {
       return;
     }
     setFieldValue('brochure', e?.target?.files?.[0]);
+  };
+
+  const loadOptions = async () => {
+    try {
+      const response = await ListCourses();
+      return {
+        options: response?.map((clg: string) => ({
+          label: clg,
+          value: clg,
+        })),
+        hasMore: false,
+      };
+    } catch (error) {
+      console.error('Failed to load options:', error);
+      return { options: [], hasMore: false };
+    }
   };
 
   return (
@@ -132,28 +158,31 @@ const AddCollege: React.FC = (): React.JSX.Element => {
               onBlur={handleBlur}
             />
 
-            <Input
+            <AsyncSelect
               label="Course Name*"
-              name="course_name"
-              placeholder="course Name"
-              labelPlacement="outside"
-              isInvalid={touched.course_name && !!errors.course_name}
-              value={values.course_name}
+              loadOptions={loadOptions}
+              //@ts-ignore
+              isMulti={true}
+              //@ts-ignore
+              value={values.course_name.map((c) => ({ label: c, value: c }))}
               onChange={(e) =>
                 setFieldValue(
                   'course_name',
-                  e.target.value
-                    .split(' ')
-                    .map(
-                      (word) =>
-                        word.charAt(0).toUpperCase() +
-                        word.slice(1).toLowerCase()
-                    )
-                    .join(' ')
+                  //@ts-ignore
+                  e?.map((course: OptionType) =>
+                    course.value
+                      ?.split(' ')
+                      .map(
+                        (word: string) =>
+                          word.charAt(0).toUpperCase() +
+                          word.slice(1).toLowerCase()
+                      )
+                      .join(' ')
+                  )
                 )
               }
-              onBlur={handleBlur}
             />
+
             <Input
               label="College Location*"
               name="college_location"

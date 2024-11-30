@@ -80,3 +80,11 @@ export const ListCourses = async () => {
     handleError(error);
   }
 };
+export const ListCollegeNames = async () => {
+  try {
+    const response = await privateAPI.get(`admin/colleges/`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
+};

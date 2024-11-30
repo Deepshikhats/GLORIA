@@ -183,6 +183,12 @@ export const colorMapping: { [status: string]: string } = {
   PENDING: 'warning',
   ADMITTED: 'success',
   'NOT ADMITTED': 'danger',
+  INTERESTED: 'primary',
+  'NOT INTERESTED': 'grey',
+  ACCEPTED: 'success',
+  'Follow Up': 'warning',
+  APPROVED: 'success',
+  NOT_APPROVED: 'danger',
 };
 export const colorMappingAttendence: { [status: string]: string } = {
   PRESENT: 'success',

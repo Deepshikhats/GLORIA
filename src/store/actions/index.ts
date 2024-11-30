@@ -28,7 +28,7 @@ const appStore = (
   selectedRowIds: {},
   courseDetails: {
     college_name: '',
-    course_name: '',
+    course_name: [],
     college_location: '',
     course_description: '',
     brochure: null,
