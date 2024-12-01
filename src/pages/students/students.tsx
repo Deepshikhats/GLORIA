@@ -38,8 +38,8 @@ const Students = () => {
   /********************************SERVICE CALLS************************************** */
   const { data, isLoading, mutate } = useSWR(
     `${swrKeys.STUDENTS}-${page}`,
-    () =>
-      ListStudents({
+    async () => {
+      const response = await ListStudents({
         limit: 10,
         page,
         //@ts-ignore
@@ -48,11 +48,20 @@ const Students = () => {
         id: is_admin ? '' : id,
         //@ts-ignore
         student_status: selectedFilter['Student Status'] || '',
-      }),
+      });
+      //@ts-ignore
+      return {
+        ...response,
+        results: response?.results?.map((item: any) => ({
+          ...item,
+          ...(item?.approval_status ? { status: item.approval_status } : {}),
+        })),
+      };
+    },
     {
       keepPreviousData: true,
       revalidateIfStale: false,
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
       revalidateOnReconnect: true,
     }
   );
@@ -86,7 +95,9 @@ const Students = () => {
   const handleStudentActions = (action: string, rowData: IStudent) => {
     setSelectedRow(rowData);
     if (action === 'edit') {
-      setShowAdmitStudentModal(true);
+      rowData.is_admitted
+        ? notify('Student is already admitted', { type: 'warning' })
+        : setShowAdmitStudentModal(true);
     } else if (action === 'delete') {
       setShowDeleteModal(true);
     } else if (action === 'download') {  // Add this part for PDF download
@@ -188,6 +199,7 @@ const Students = () => {
         setIsOpen={setShowAdmitStudentModal}
         //@ts-ignore
         setAdmittedState={setSelectedRow}
+        mutate={mutate}
       />
       <Modals.ConfirmationModal
         isOpen={showDeleteModal}

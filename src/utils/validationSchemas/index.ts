@@ -75,7 +75,10 @@ export const editStudentValidationSchema = Yup.object().shape({
 
 export const CollegeSchema = Yup.object({
   college_name: Yup.string().required('Required'),
-  course_name: Yup.string().required('Required'),
+  course_name: Yup.array()
+    .of(Yup.string().required('Each course name is required'))
+    .required('Course names are required')
+    .min(1, 'At least one course name is required'),
   college_location: Yup.string().required('Required'),
   course_description: Yup.string(),
   brochure: Yup.mixed().nullable(),
