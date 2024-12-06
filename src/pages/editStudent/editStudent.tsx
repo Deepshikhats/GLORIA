@@ -10,6 +10,7 @@ import { updateStudent, ViewStudentDetails } from '@/services/studentService';
 import useStore from '@/store/store';
 import {
   adminEditableFields,
+  autoCalculatedFields,
   basicInfo,
   docFields,
   employeeRestrictedFields,
@@ -35,12 +36,17 @@ interface InitialValueTypes extends IStudent {
 const EditStudent: React.FC = (): React.JSX.Element => {
   const location = useLocation();
   const {
-    userDetails: { is_admin },
-  } = useStore((state) => state);
+    userDetails: { is_admin, is_agent },
+  } = useStore((state: any) => state);
 
   /*******************************REACT-HOOKS********************************************* */
   const isFieldDisabled = useMemo(
     () => (field: string) => {
+
+      if (autoCalculatedFields.includes(field)) {
+        return true;
+      }
+
       return is_admin
         ? !adminEditableFields?.includes(field)
         : employeeRestrictedFields?.includes(field);
@@ -62,8 +68,14 @@ const EditStudent: React.FC = (): React.JSX.Element => {
     const authorizedFields = is_admin
       ? Object.keys(values).filter((val) => adminEditableFields.includes(val))
       : Object.keys(values).filter(
-          (val) => !employeeRestrictedFields.includes(val)
+          (val) => !employeeRestrictedFields.includes(val) &&
+          !['payments', 'service_charge_withdrawn', 'balance_service_charge', 'date_of_admission', 'total_fees'].includes(val) // Exclude invalid fields for agent
         );
+
+        // Make sure to include uniform_fee and extra_fee for agents
+  if (is_agent) {
+    authorizedFields.push('uniform_fee', 'extra_fee');
+  }
 
     authorizedFields.forEach((field) => {
       if (field === 'student_response') {
@@ -421,7 +433,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
             {location.state?.is_admitted && (
               <>
                 <h5 className="font-bold text-primary border-b py-1">
-                  Documnets
+                  Documents
                 </h5>
                 <div className="flex gap-2 items-center text-red-500 text-sm">
                   <span>{GetIcons('info')} </span>
