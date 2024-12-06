@@ -209,6 +209,8 @@ export const adminEditableFields = [
   ...basicInfo,
   'approval_status',
   'admin_messages',
+  'admin_notes',
+  'employee_incentive',
   'course_status',
   'staff_assigned',
   'staff_assigned_full_name',
@@ -228,11 +230,19 @@ export const employeeRestrictedFields: string[] = [
   'id',
   'approval_status',
   'admin_messages',
+  'admin_notes',
+  'employee_incentive',
   'staff_assigned',
   'staff_assigned_full_name',
   'admitted_by_full_name',
   'commision',
 ];
+
+export const autoCalculatedFields: string[] = [
+  'total_fees',
+  'balance_service_charge'
+];
+
 
 export const docFields: string[] = [
   'passport_photo',
