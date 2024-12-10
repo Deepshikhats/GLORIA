@@ -1,8 +1,10 @@
 import GetIcons from '@/assets/icons';
+import AsyncSelect from '@/components/asyncSelect';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import PhoneNumberInput from '@/components/phoneNumberInput';
 import TextArea from '@/components/textArea';
+import { ListCollegeNames } from '@/services/collegeService';
 import {
   AddBulkStudents,
   AddStudent as AddStudentApi,
@@ -19,6 +21,26 @@ import React, { useState } from 'react';
 const AddStudents: React.FC = (): React.JSX.Element => {
   const [file, setFile] = useState<File | undefined>(undefined);
   const [uploadingFile, setUploadingFile] = useState<boolean>(false);
+
+  /************************************************************* */
+
+  const loadOptions = async () => {
+    try {
+      const response = await ListCollegeNames();
+      return {
+        options: response?.map((clg: string) => ({
+          label: clg,
+          value: clg,
+        })),
+        hasMore: false,
+      };
+    } catch (error) {
+      console.error('Failed to load options:', error);
+      return { options: [], hasMore: false };
+    }
+  };
+
+  /*************************************************************** */
 
   /**
    * @function handleEmployeeRegister
@@ -91,6 +113,7 @@ const AddStudents: React.FC = (): React.JSX.Element => {
           phone_number: '',
           place: '',
           course: '',
+          college: '',
         }}
         onSubmit={handleAddStudent}
         validationSchema={AddStudentSchema}
@@ -154,6 +177,12 @@ const AddStudents: React.FC = (): React.JSX.Element => {
               value={values.place}
               onChange={handleChange}
               onBlur={handleBlur}
+            />
+            <AsyncSelect
+              label="College Name*"
+              loadOptions={loadOptions}
+              value={{ label: values.college, value: values.college }}
+              onChange={(e) => setFieldValue('college', e?.label)}
             />
             <Input
               label="Course"

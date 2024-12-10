@@ -97,9 +97,90 @@ export const updateStudent = async ({
 
 export const downloadStudentPdf = async (id: string) => {
   try {
-    const response = await privateAPI.get(`admin/students/${id}/download-pdf/`, {
-      responseType: 'blob', // Ensures the response is treated as a file
-    });
+    const response = await privateAPI.get(
+      `admin/students/${id}/download-pdf/`,
+      {
+        responseType: 'blob', // Ensures the response is treated as a file
+      }
+    );
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return Promise.reject(error);
+  }
+};
+
+export const CreatePayments = async ({
+  payload,
+  id,
+}: {
+  payload: FormData;
+  id: string;
+}) => {
+  try {
+    const response = await privateAPI.post(
+      `employee/students/${id}/payments/`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return Promise.reject(error);
+  }
+};
+export const ListPayments = async (id: string) => {
+  try {
+    const response = await privateAPI.get(`employee/students/${id}/payments/`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return Promise.reject(error);
+  }
+};
+
+export const DeletePayments = async ({
+  ids,
+  id,
+}: {
+  ids: number[];
+  id: string;
+}) => {
+  try {
+    const response = await privateAPI.delete(
+      `employee/students/${id}/payments/delete/`,
+      {
+        data: { payment_ids: ids },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return Promise.reject(error);
+  }
+};
+
+export const EditPayments = async ({
+  payload,
+  id,
+}: {
+  payload: FormData;
+  id: string;
+}) => {
+  try {
+    const response = await privateAPI.put(
+      `employee/students/${id}/payments/`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     handleError(error);

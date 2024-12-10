@@ -117,3 +117,18 @@ export const ResetPasswordSchema = Yup.object().shape({
     .matches(/^\d+$/, 'OTP should contain only digits')
     .required('This field is required'),
 });
+export const PaymentDetailsSchema = Yup.object({
+  account_details: Yup.string().required('Account details are required'),
+  amount_received_from_student: Yup.number()
+    .min(0, 'Amount received must be at least 0')
+    .required('Amount received from the student is required'),
+  amount_paid_to_college: Yup.number()
+    .min(0, 'Amount paid to college must be at least 0')
+    .required('Amount paid to the college is required'),
+  date_of_payment: Yup.string().nullable(),
+  payment_screenshot: Yup.mixed().nullable().notRequired(),
+  remarks: Yup.string()
+    .max(255, 'Remarks must be at most 255 characters')
+    .nullable()
+    .notRequired(),
+});

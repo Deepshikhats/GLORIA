@@ -71,3 +71,17 @@ body {
     margin-right 0.35s ease-in-out,
     right 0.35s ease-in-out;
 }
+
+.ww_ {
+  section {
+    overflow: auto;
+    flex: 1;
+  }
+}
+
+.wy__ {
+  section {
+    overflow: hidden;
+    flex: 1;
+  }
+}
