@@ -28,9 +28,7 @@ const AddCollege: React.FC = (): React.JSX.Element => {
   useEffect(() => {
     if (params?.id) {
       GetCourseDetails(params.id).then((data) => {
-        console.log(data);
-
-        // setCourseDetails(data);
+        setCourseDetails(data);
       });
     }
     return () =>
@@ -140,6 +138,7 @@ const AddCollege: React.FC = (): React.JSX.Element => {
               name="college_name"
               placeholder="College Name"
               labelPlacement="outside"
+              isDisabled={!!params?.id}
               isInvalid={touched.college_name && !!errors.college_name}
               value={values.college_name}
               onChange={(e) =>
@@ -161,6 +160,7 @@ const AddCollege: React.FC = (): React.JSX.Element => {
             <AsyncSelect
               label="Course Name*"
               loadOptions={loadOptions}
+              isDisabled={!!params?.id}
               //@ts-ignore
               isMulti={true}
               //@ts-ignore

@@ -148,6 +148,55 @@ export const courseStatus = [
     value: 'completed',
   },
 ];
+export const gender = [
+  {
+    label: 'Female',
+    value: 'female',
+  },
+  {
+    label: 'Male',
+    value: 'male',
+  },
+  {
+    label: 'Other',
+    value: 'other',
+  },
+];
+
+export const bloodGroupOptions = [
+  {
+    label: 'A Positive (A+)',
+    value: 'A+',
+  },
+  {
+    label: 'A Negative (A-)',
+    value: 'A-',
+  },
+  {
+    label: 'B Positive (B+)',
+    value: 'B+',
+  },
+  {
+    label: 'B Negative (B-)',
+    value: 'B-',
+  },
+  {
+    label: 'AB Positive (AB+)',
+    value: 'AB+',
+  },
+  {
+    label: 'AB Negative (AB-)',
+    value: 'AB-',
+  },
+  {
+    label: 'O Positive (O+)',
+    value: 'O+',
+  },
+  {
+    label: 'O Negative (O-)',
+    value: 'O-',
+  },
+];
 export const studentFilterOptions = [
   {
     label: 'Admission Status',
@@ -202,15 +251,27 @@ export const mapDropDownOptions = {
   mode_of_payment: paymentModeOptions,
   approval_status: approvalStatus,
   course_status: courseStatus,
+  gender,
+  blood_group: bloodGroupOptions,
 };
-export const basicInfo = ['name', 'email', 'phone_number', 'place', 'course'];
+export const basicInfo = [
+  'name',
+  'email',
+  'phone_number',
+  'place',
+  'course',
+  'college',
+];
 
 export const adminEditableFields = [
   ...basicInfo,
   'approval_status',
+  'admin_notes',
   'admin_messages',
-  'course_status',
+  'total_service_charge',
   'staff_assigned',
+  'employee_incentive',
+  'course_status',
   'staff_assigned_full_name',
 ];
 
@@ -228,6 +289,8 @@ export const employeeRestrictedFields: string[] = [
   'id',
   'approval_status',
   'admin_messages',
+  'admin_notes',
+  'total_service_charge',
   'staff_assigned',
   'staff_assigned_full_name',
   'admitted_by_full_name',
@@ -241,7 +304,20 @@ export const docFields: string[] = [
   'aadhar',
   'other_documents',
 ];
-
+export const paymentFields: string[] = [
+  'total_fees',
+  'total_service_charge',
+  'extra_fee',
+  'employee_incentive',
+  'balance_service_charge',
+  'service_charge_withdrawn',
+  'uniform_fee',
+  'first_year',
+  'second_year',
+  'third_year',
+  'fourth_year',
+  'fifth_year',
+];
 export const collegeColums: TColumn[] = [
   {
     title: { label: 'COLLEGE' },
