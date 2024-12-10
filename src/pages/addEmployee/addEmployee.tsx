@@ -1,6 +1,5 @@
 import GetIcons from '@/assets/icons';
 import Button from '@/components/button';
-import CheckBox from '@/components/checkbox/checkbox';
 import Menu from '@/components/dropdown';
 import Input from '@/components/input';
 import {

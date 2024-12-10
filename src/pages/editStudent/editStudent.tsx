@@ -1,6 +1,7 @@
 import GetIcons from '@/assets/icons';
 import AsyncSelect from '@/components/asyncSelect';
 import Button from '@/components/button';
+import CheckBox from '@/components/checkbox';
 import DatePicker from '@/components/datePicker';
 import Menu from '@/components/dropdown';
 import Input from '@/components/input';
@@ -30,14 +31,12 @@ import {
   editStudentValidationSchema,
   PaymentDetailsSchema,
 } from '@/utils/validationSchemas';
+import { Accordion, AccordionItem } from '@nextui-org/react';
 import { FieldArray, Form, Formik, FormikHelpers } from 'formik';
 import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useSWR from 'swr';
-import { Accordion, AccordionItem } from '@nextui-org/react';
-import CheckBox from '@/components/checkbox';
-import { error } from 'console';
 //@ts-ignore
 interface InitialValueTypes extends IStudent {
   student_response?: string[];
@@ -199,10 +198,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
    * @param values
    * @param action
    */
-  const handlePayments = (
-    payload: IPayment,
-    action: FormikHelpers<{ payments: IPayment }>
-  ) => {
+  const handlePayments = (payload: IPayment) => {
     const formData = new FormData();
 
     Object.keys(payload).forEach((field) => {
@@ -359,9 +355,10 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                           <AsyncSelect
                             label="College Name*"
                             loadOptions={loadCollegeOptions}
-                            //@ts-ignore
                             value={{
+                              //@ts-ignore
                               label: values?.[field],
+                              //@ts-ignore
                               value: values?.[field],
                             }}
                             onChange={(e) => setFieldValue('college', e?.label)}

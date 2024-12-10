@@ -8,6 +8,7 @@ interface IRegister {
   email: string;
   phone_number: string;
   is_admin: boolean;
+  is_agent: boolean;
   is_employee: boolean;
   work_location?: string;
 }
@@ -91,6 +92,7 @@ interface IUserDetails {
   email: string;
   first_name: string;
   id: string;
+  is_agent: boolean;
   is_admin: boolean;
   is_employee: boolean;
   last_name: string;
