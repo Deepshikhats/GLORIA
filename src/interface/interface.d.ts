@@ -10,6 +10,7 @@ interface IRegister {
   is_admin: boolean;
   is_agent: boolean;
   is_employee: boolean;
+  is_agent: boolean;
   work_location?: string;
 }
 interface IListTableData {
@@ -95,6 +96,7 @@ interface IUserDetails {
   is_agent: boolean;
   is_admin: boolean;
   is_employee: boolean;
+  is_agent: boolean;
   last_name: string;
   phone_number: string;
   username: string;

@@ -19,6 +19,7 @@ import {
 import useStore from '@/store/store';
 import {
   adminEditableFields,
+  autoCalculatedFields,
   basicInfo,
   docFields,
   employeeRestrictedFields,
@@ -67,6 +68,10 @@ const EditStudent: React.FC = (): React.JSX.Element => {
   ]);
   const isFieldDisabled = useMemo(
     () => (field: string) => {
+      if (autoCalculatedFields.includes(field)) {
+        return true;
+      }
+
       return is_admin
         ? !adminEditableFields?.includes(field)
         : employeeRestrictedFields?.includes(field);
@@ -92,8 +97,21 @@ const EditStudent: React.FC = (): React.JSX.Element => {
     const authorizedFields = is_admin
       ? Object.keys(values).filter((val) => adminEditableFields.includes(val))
       : Object.keys(values).filter(
-          (val) => !employeeRestrictedFields.includes(val)
+          (val) =>
+            !employeeRestrictedFields.includes(val) &&
+            ![
+              'payments',
+              'service_charge_withdrawn',
+              'balance_service_charge',
+              'date_of_admission',
+              'total_fees',
+            ].includes(val) // Exclude invalid fields for agent
         );
+
+    // Make sure to include uniform_fee and extra_fee for agents
+    if (is_agent) {
+      authorizedFields.push('uniform_fee', 'extra_fee');
+    }
 
     authorizedFields.forEach((field) => {
       if (field === 'student_response') {

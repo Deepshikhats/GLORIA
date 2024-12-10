@@ -269,6 +269,9 @@ export const adminEditableFields = [
   'admin_notes',
   'admin_messages',
   'total_service_charge',
+  'admin_notes',
+  'employee_incentive',
+  'course_status',
   'staff_assigned',
   'employee_incentive',
   'course_status',
@@ -291,10 +294,16 @@ export const employeeRestrictedFields: string[] = [
   'admin_messages',
   'admin_notes',
   'total_service_charge',
+  'employee_incentive',
   'staff_assigned',
   'staff_assigned_full_name',
   'admitted_by_full_name',
   'commision',
+];
+
+export const autoCalculatedFields: string[] = [
+  'total_fees',
+  'balance_service_charge',
 ];
 
 export const docFields: string[] = [
