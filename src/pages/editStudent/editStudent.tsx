@@ -6,7 +6,7 @@ import DatePicker from '@/components/datePicker';
 import Menu from '@/components/dropdown';
 import Input from '@/components/input';
 import TextArea from '@/components/textArea';
-import { ListCollegeNames } from '@/services/collegeService';
+import { ListCollegeNames, ListCourses } from '@/services/collegeService';
 import { ListEmployeeNames } from '@/services/employeeService';
 import {
   CreatePayments,
@@ -258,6 +258,22 @@ const EditStudent: React.FC = (): React.JSX.Element => {
       }
     );
   };
+
+  const loadCourseOptions = async () => {
+    try {
+      const response = await ListCourses();
+      return {
+        options: response?.map((clg: string) => ({
+          label: clg,
+          value: clg,
+        })),
+        hasMore: false,
+      };
+    } catch (error) {
+      console.error('Failed to load options:', error);
+      return { options: [], hasMore: false };
+    }
+  };
   /*******************************CUSTOM METHODS********************************************* */
 
   const handleFileUpload = (
@@ -369,17 +385,21 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                             onChange={handleChange}
                             onBlur={handleBlur}
                           />
-                        ) : field === 'college' ? (
+                        ) : ['course', 'college'].includes(field) ? (
                           <AsyncSelect
-                            label="College Name*"
-                            loadOptions={loadCollegeOptions}
+                            label={`${field} Name*`}
+                            loadOptions={
+                              field === 'college'
+                                ? loadCollegeOptions
+                                : loadCourseOptions
+                            }
                             value={{
                               //@ts-ignore
                               label: values?.[field],
                               //@ts-ignore
                               value: values?.[field],
                             }}
-                            onChange={(e) => setFieldValue('college', e?.label)}
+                            onChange={(e) => setFieldValue(field, e?.label)}
                           />
                         ) : (
                           <Input
@@ -803,6 +823,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                           touched?.amount_received_from_student &&
                           !!errors?.amount_received_from_student
                         }
+                        errorText={errors.amount_received_from_student}
                         value={values.amount_received_from_student}
                         type="number"
                         onChange={handleChange}
@@ -891,8 +912,8 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                     ...cv,
                     {
                       account_details: '',
-                      amount_paid_to_college: '',
-                      amount_received_from_student: '',
+                      amount_paid_to_college: 0,
+                      amount_received_from_student: 0,
                       date_of_payment: moment().format('YYYY/MM/DD'),
                       id: 0,
                       payment_screenshot: '',
