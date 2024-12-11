@@ -1,6 +1,6 @@
 import Table from '@/components/table';
 import PATH from '@/routes/paths';
-import { deleteStudents, ListStudents } from '@/services/studentService';
+import { deleteStudents, downloadStudentPdf, ListStudents } from '@/services/studentService';
 import useStore from '@/store/store';
 import {
   colorMapping,
@@ -34,11 +34,12 @@ const Students = () => {
     [key: string]: string[];
   }>({});
 
+  console.log("Selected ", selectedRow)
   /********************************SERVICE CALLS************************************** */
   const { data, isLoading, mutate } = useSWR(
     `${swrKeys.STUDENTS}-${page}`,
-    () =>
-      ListStudents({
+    async () => {
+      const response = await ListStudents({
         limit: 10,
         page,
         //@ts-ignore
@@ -47,11 +48,20 @@ const Students = () => {
         id: is_admin ? '' : id,
         //@ts-ignore
         student_status: selectedFilter['Student Status'] || '',
-      }),
+      });
+      //@ts-ignore
+      return {
+        ...response,
+        results: response?.results?.map((item: any) => ({
+          ...item,
+          ...(item?.approval_status ? { status: item.approval_status } : {}),
+        })),
+      };
+    },
     {
       keepPreviousData: true,
       revalidateIfStale: false,
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
       revalidateOnReconnect: true,
     }
   );
@@ -78,15 +88,35 @@ const Students = () => {
       .then((value) => notify(value, { type: 'success' }))
       .finally(() => setIsDltLoading(false));
   };
+  
 
   /********************************CUSTOM METHODS************************************** */
 
   const handleStudentActions = (action: string, rowData: IStudent) => {
     setSelectedRow(rowData);
     if (action === 'edit') {
-      setShowAdmitStudentModal(true);
+      rowData.is_admitted
+        ? notify('Student is already admitted', { type: 'warning' })
+        : setShowAdmitStudentModal(true);
     } else if (action === 'delete') {
       setShowDeleteModal(true);
+    } else if (action === 'download') {  // Add this part for PDF download
+      handleDownloadPdf(rowData.id);
+    }
+  };
+
+  const handleDownloadPdf = async (studentId: string) => {
+    try {
+      const pdfData = await downloadStudentPdf(studentId); // Call the API function
+      const url = window.URL.createObjectURL(new Blob([pdfData]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Student_${studentId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Failed to download PDF', error);
     }
   };
 
@@ -106,7 +136,7 @@ const Students = () => {
   };
 
   const isRowEditDisabled = useMemo(
-    () => (_data?: IStudent, action?: 'edit' | 'delete' | 'view') => {
+    () => (_data?: IStudent, action?: 'edit' | 'delete' | 'view' | 'download') => {
       return action === 'edit' ? is_admin : false;
     },
     [is_admin]
@@ -169,6 +199,7 @@ const Students = () => {
         setIsOpen={setShowAdmitStudentModal}
         //@ts-ignore
         setAdmittedState={setSelectedRow}
+        mutate={mutate}
       />
       <Modals.ConfirmationModal
         isOpen={showDeleteModal}

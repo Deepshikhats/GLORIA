@@ -1,6 +1,5 @@
 import GetIcons from '@/assets/icons';
 import Button from '@/components/button';
-import CheckBox from '@/components/checkbox/checkbox';
 import Menu from '@/components/dropdown';
 import Input from '@/components/input';
 import {
@@ -12,6 +11,7 @@ import useStore from '@/store/store';
 import { workModeOptions } from '@/utils/constants';
 import { notify } from '@/utils/helpers/helpers';
 import { NewEmployeeSchema } from '@/utils/validationSchemas';
+import { Radio, RadioGroup } from '@nextui-org/react';
 import { Formik, FormikHelpers } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -34,6 +34,7 @@ const AddEmployee: React.FC = (): React.JSX.Element => {
     phone_number: '',
     is_admin: false,
     is_employee: true,
+    is_agent: false,
     work_location: '',
   });
 
@@ -141,6 +142,7 @@ const AddEmployee: React.FC = (): React.JSX.Element => {
           touched,
           isSubmitting,
           handleChange,
+          setValues,
           resetForm,
           handleBlur,
           handleSubmit,
@@ -206,13 +208,33 @@ const AddEmployee: React.FC = (): React.JSX.Element => {
                 )?.label
               }
             />
-            <CheckBox
-              isSelected={values.is_admin}
-              className="self-end mb-1"
-              onChange={(e) => setFieldValue('is_admin', e.target.checked)}
+
+            <RadioGroup
+              label="Choose any"
+              color="secondary"
+              classNames={{ label: 'block text-small' }}
+              value={
+                values.is_admin
+                  ? 'admin'
+                  : values.is_employee
+                    ? 'employee'
+                    : 'agent'
+              }
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                setValues({
+                  ...values,
+                  is_admin: selectedValue === 'admin',
+                  is_employee: selectedValue === 'employee',
+                  is_agent: selectedValue === 'agent',
+                });
+              }}
+              orientation="horizontal"
             >
-              Make Admin
-            </CheckBox>
+              <Radio value="employee">Employee</Radio>
+              <Radio value="admin">Admin</Radio>
+              <Radio value="agent">Consultant</Radio>
+            </RadioGroup>
             <div className="flex items-center gap-3 col-span-1 lg:col-span-2">
               <Button
                 label="Discard"

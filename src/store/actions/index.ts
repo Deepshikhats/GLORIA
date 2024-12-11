@@ -16,6 +16,7 @@ const appStore = (
     first_name: '',
     id: '',
     is_admin: false,
+    is_agent: false,
     is_employee: false,
     last_name: '',
     phone_number: '',
@@ -28,7 +29,7 @@ const appStore = (
   selectedRowIds: {},
   courseDetails: {
     college_name: '',
-    course_name: '',
+    course_name: [],
     college_location: '',
     course_description: '',
     brochure: null,

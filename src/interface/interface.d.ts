@@ -8,7 +8,9 @@ interface IRegister {
   email: string;
   phone_number: string;
   is_admin: boolean;
+  is_agent: boolean;
   is_employee: boolean;
+  is_agent: boolean;
   work_location?: string;
 }
 interface IListTableData {
@@ -28,6 +30,7 @@ interface IEmployee {
   first_name: string;
   last_name: string;
   is_employee: boolean;
+  is_agent: boolean;
   work_location: string;
   is_admin: boolean;
 }
@@ -63,6 +66,7 @@ interface IStudent {
   amount_paid_to_college: string;
   date_of_payment: string;
   commision: string;
+  payments: IPayment[];
 }
 
 interface IStudent_R {
@@ -76,6 +80,7 @@ interface IAddStudent {
   phone_number: string;
   place: string;
   course: string;
+  college: string;
 }
 
 interface IListStudents extends IListTableData {
@@ -88,8 +93,10 @@ interface IUserDetails {
   email: string;
   first_name: string;
   id: string;
+  is_agent: boolean;
   is_admin: boolean;
   is_employee: boolean;
+  is_agent: boolean;
   last_name: string;
   phone_number: string;
   username: string;
@@ -98,9 +105,13 @@ interface IUserDetails {
   work_location: string;
   password_changed: boolean;
 }
+interface OptionType {
+  label: string;
+  value: string;
+}
 interface IAddCollege {
   college_name: string;
-  course_name: string;
+  course_name: string[];
   college_location: string;
   course_description: string;
   brochure: File | null;
@@ -144,4 +155,15 @@ interface ICheckInDetails {
   user_id: string;
   username: string;
   work_location: string;
+}
+
+interface IPayment {
+  id: number;
+  account_details: string;
+  amount_received_from_student: string;
+  amount_paid_to_college: string;
+  date_of_payment: string;
+  payment_screenshot: string;
+  remarks: string;
+  isNew?: boolean;
 }
