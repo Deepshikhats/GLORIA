@@ -121,13 +121,13 @@ export const PaymentDetailsSchema = Yup.object({
   account_details: Yup.string().required('Account details are required'),
   amount_paid_to_college: Yup.number()
     .min(0, 'Amount paid to college must be at least 0')
-    .required('Amount paid to the college is required'),
+    .required('required'),
   amount_received_from_student: Yup.number()
-    .required('Amount received from the student is required')
+    .required('required')
     .when('amount_paid_to_college', (amt, schema) =>
       schema.min(
         amt[0] + 1,
-        'Amount received from the student must be greater than the amount paid to college'
+        'Amount from the student must be higher than amount paid to college'
       )
     ),
   date_of_payment: Yup.string().nullable(),

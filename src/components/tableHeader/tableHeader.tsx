@@ -5,6 +5,7 @@ import { tableHeaderOptions } from '@/utils/constants';
 import React, { memo } from 'react';
 import { TableHeaderProps } from '.';
 import Filter from '../filter';
+import GetIcons from '@/assets/icons';
 
 const TableHeader: React.FC<TableHeaderProps> = ({
   btnLabel = '',
@@ -37,7 +38,13 @@ const TableHeader: React.FC<TableHeaderProps> = ({
         {showFilter && <Filter {...rest} />}
         {showBtn && (
           <Button
-            label={btnLabel}
+            //@ts-ignore
+            label={
+              <>
+                <span className="hidden md:block">{btnLabel}</span>
+                <span className="md:hidden">{GetIcons('plus')}</span>
+              </>
+            }
             color="primary"
             onClick={(e) => !isBtnDisabled && onBtnClick && onBtnClick(e)}
             isDisabled={isBtnDisabled}

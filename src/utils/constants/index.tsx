@@ -384,3 +384,31 @@ export const AttendenceColums: TColumn[] = [
     d_name: 'work_location',
   },
 ];
+export const TableOptions = ({
+  isEdit,
+  isView,
+  isDownload,
+  isDelete,
+}: {
+  isEdit: boolean;
+  isView: boolean;
+  isDownload: boolean;
+  isDelete: boolean;
+}) => {
+  const options = [];
+
+  if (isEdit) {
+    options.push({ label: 'Edit', value: 'edit' });
+  }
+  if (isView) {
+    options.push({ label: 'View', value: 'view' });
+  }
+  if (isDownload) {
+    options.push({ label: 'Download', value: 'download' });
+  }
+  if (isDelete) {
+    options.push({ label: 'Delete', value: 'delete' });
+  }
+
+  return options;
+};

@@ -80,7 +80,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
   );
 
   useEffect(() => {
-    loadPayments();
+    location?.state?.is_admitted && loadPayments();
   }, []);
 
   /*******************************SERVICES********************************************* */
@@ -235,6 +235,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
         setPaymentsList((cv) =>
           cv.map((v, i) => (i === cv.length - 1 ? e.data : v))
         );
+        mutate();
       });
     } else {
       EditPayments({ payload: formData, id: location.state.id }).then((e) => {
@@ -254,6 +255,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
         setPaymentsList((cv) =>
           cv.filter((item) => !selectedPayments.includes(item.id))
         );
+        mutate();
         setSelectedPayments([]);
       }
     );
@@ -733,205 +735,212 @@ const EditStudent: React.FC = (): React.JSX.Element => {
             </Formik>
           }
         </AccordionItem>
-        <AccordionItem
-          key={1}
-          aria-label={'payment_info'}
-          title={'Payment Info'}
-          className=" flex flex-col"
-          classNames={{ content: '', base: 'wy__' }}
-        >
-          <>
-            <section className="grid grid-cols-1 gap-4 gap-y-8 md:grid-cols-2 flex-1 !overflow-auto py-2 pr-2">
-              {paymentsList?.map((item, index) => (
-                <Formik
-                  key={index}
-                  initialValues={{
-                    ...item,
-                  }}
-                  //@ts-ignore
-                  onSubmit={handlePayments}
-                  validationSchema={PaymentDetailsSchema}
-                  enableReinitialize={true}
-                >
-                  {({
-                    values,
-                    touched,
-                    errors,
-                    setFieldValue,
-                    handleBlur,
-                    handleChange,
-                  }) => (
-                    <Form className="border-2 rounded-lg p-3 border-[#d8dada]">
-                      <div className="flex justify-between">
-                        <h5 className="text-sm font-bold mb-3">
-                          New Installment
-                        </h5>
+        {location?.state?.is_admitted && (
+          <AccordionItem
+            key={1}
+            aria-label={'payment_info'}
+            title={'Payment Info'}
+            className=" flex flex-col"
+            classNames={{ content: '', base: 'wy__' }}
+          >
+            <>
+              <section className="grid grid-cols-1 gap-4 gap-y-8 md:grid-cols-2 flex-1 !overflow-auto py-2 pr-2">
+                {paymentsList?.map((item, index) => (
+                  <Formik
+                    key={index}
+                    initialValues={{
+                      ...item,
+                    }}
+                    //@ts-ignore
+                    onSubmit={handlePayments}
+                    validationSchema={PaymentDetailsSchema}
+                    enableReinitialize={true}
+                  >
+                    {({
+                      values,
+                      touched,
+                      errors,
+                      setFieldValue,
+                      handleBlur,
+                      handleChange,
+                    }) => (
+                      <Form className="border-2 rounded-lg p-3 border-[#d8dada] flex flex-col gap-3">
+                        <div className="flex justify-between">
+                          <h5 className="text-sm font-bold mb-3">
+                            New Installment
+                          </h5>
 
-                        <div className="flex gap-2 items-center">
-                          <Button
-                            label="Save"
-                            type="submit"
-                            color="success"
-                            className="h-8 text-white text-xs"
-                          />
-                          {values?.isNew ? (
-                            <span
-                              className="cursor-pointer rounded-full h-8 w-8 border border-black flex justify-center items-center"
-                              onClick={() =>
-                                setPaymentsList((cv) =>
-                                  cv.filter((_v, i) => i !== index)
-                                )
-                              }
-                            >
-                              {GetIcons('delete')}
-                            </span>
-                          ) : (
-                            <CheckBox
-                              onChange={(e) => {
-                                setSelectedPayments((cv) =>
-                                  e.target.checked
-                                    ? [...cv, values.id]
-                                    : cv.filter((id) => id !== values.id)
-                                );
-                              }}
-                              isSelected={selectedPayments.includes(values.id)}
+                          <div className="flex gap-2 items-center">
+                            <Button
+                              label="Save"
+                              type="submit"
+                              color="success"
+                              className="h-8 text-white text-xs"
                             />
-                          )}
+                            {values?.isNew ? (
+                              <span
+                                className="cursor-pointer rounded-full h-8 w-8 border border-black flex justify-center items-center"
+                                onClick={() =>
+                                  setPaymentsList((cv) =>
+                                    cv.filter((_v, i) => i !== index)
+                                  )
+                                }
+                              >
+                                {GetIcons('delete')}
+                              </span>
+                            ) : (
+                              <CheckBox
+                                onChange={(e) => {
+                                  setSelectedPayments((cv) =>
+                                    e.target.checked
+                                      ? [...cv, values.id]
+                                      : cv.filter((id) => id !== values.id)
+                                  );
+                                }}
+                                isSelected={selectedPayments.includes(
+                                  values.id
+                                )}
+                              />
+                            )}
+                          </div>
                         </div>
-                      </div>
 
-                      <Input
-                        label={'Account Details'}
-                        name={`account_details`}
-                        placeholder={`Enter here`}
-                        labelPlacement="outside"
-                        isInvalid={
-                          touched?.account_details &&
-                          //@ts-ignore
-                          !!errors?.account_details
-                        }
-                        value={values.account_details}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                      <Input
-                        label={'Amount from students'}
-                        name={`amount_received_from_student`}
-                        placeholder={`Enter here`}
-                        labelPlacement="outside"
-                        isInvalid={
-                          touched?.amount_received_from_student &&
-                          !!errors?.amount_received_from_student
-                        }
-                        errorText={errors.amount_received_from_student}
-                        value={values.amount_received_from_student}
-                        type="number"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-
-                      <Input
-                        label={`Amount to college`}
-                        name={`amount_paid_to_college`}
-                        placeholder={`Enter here`}
-                        labelPlacement="outside"
-                        isInvalid={
-                          touched?.amount_paid_to_college &&
-                          !!errors?.amount_paid_to_college
-                        }
-                        type="number"
-                        value={values.amount_paid_to_college}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                      <DatePicker
-                        dateFormat="dd/MM/yyyy"
-                        label="Date of Payment"
-                        selected={
-                          values?.date_of_payment
-                            ? new Date(values?.date_of_payment)
-                            : new Date()
-                        }
-                        onChange={(date) =>
-                          setFieldValue(
-                            `date_of_payment`,
-                            moment(date).format('YYYY/MM/DD')
-                          )
-                        }
-                        maxDate={new Date()}
-                      />
-                      <TextArea
-                        label={'Remark'}
-                        name={`remarks`}
-                        labelPlacement="outside"
-                        maxRows={3}
-                        value={values.remarks}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                      <div className="flex flex-col gap-2">
-                        <label
-                          htmlFor={'screenshot'}
-                          className="capitalize text-small"
-                        >
-                          Screenshot of payment
-                        </label>
-                        <input
-                          type="file"
-                          name={'screenshot'}
-                          id={'screenshot'}
-                          className="font-medium p-2 border-1 rounded-lg cursor-pointer text-primary flex gap-2 items-center"
-                          accept={'.jpg,.jpeg,.pdf,.jpg,.jpeg,.png'}
+                        <Input
+                          label={'Account Details'}
+                          name={`account_details`}
+                          placeholder={`Enter here`}
+                          labelPlacement="outside"
+                          isInvalid={
+                            touched?.account_details &&
+                            //@ts-ignore
+                            !!errors?.account_details
+                          }
+                          value={values.account_details}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                        <Input
+                          label={'Amount from students'}
+                          name={`amount_received_from_student`}
+                          placeholder={`Enter here`}
+                          labelPlacement="outside"
+                          isInvalid={
+                            touched?.amount_received_from_student &&
+                            !!errors?.amount_received_from_student
+                          }
+                          errorText={errors.amount_received_from_student}
+                          value={values.amount_received_from_student}
                           onChange={(e) =>
-                            handleFileUpload(e, `screenshot`, setFieldValue)
+                            /^\d*$/.test(e.target.value) && handleChange(e)
                           }
                           onBlur={handleBlur}
                         />
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
-              ))}
-            </section>
-            <div className="flex mt-2 gap-2 items-center">
-              {!!selectedPayments.length && (
+
+                        <Input
+                          label={`Amount to college`}
+                          name={`amount_paid_to_college`}
+                          placeholder={`Enter here`}
+                          labelPlacement="outside"
+                          isInvalid={
+                            touched?.amount_paid_to_college &&
+                            !!errors?.amount_paid_to_college
+                          }
+                          value={values.amount_paid_to_college}
+                          errorText={errors.amount_paid_to_college}
+                          onChange={(e) =>
+                            /^\d*$/.test(e.target.value) && handleChange(e)
+                          }
+                          onBlur={handleBlur}
+                        />
+                        <DatePicker
+                          dateFormat="dd/MM/yyyy"
+                          label="Date of Payment"
+                          selected={
+                            values?.date_of_payment
+                              ? new Date(values?.date_of_payment)
+                              : new Date()
+                          }
+                          onChange={(date) =>
+                            setFieldValue(
+                              `date_of_payment`,
+                              moment(date).format('YYYY/MM/DD')
+                            )
+                          }
+                          maxDate={new Date()}
+                        />
+                        <TextArea
+                          label={'Remark'}
+                          name={`remarks`}
+                          labelPlacement="outside"
+                          maxRows={3}
+                          value={values.remarks}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                        <div className="flex flex-col gap-2">
+                          <label
+                            htmlFor={'screenshot'}
+                            className="capitalize text-small"
+                          >
+                            Screenshot of payment
+                          </label>
+                          <input
+                            type="file"
+                            name={'screenshot'}
+                            id={'screenshot'}
+                            className="font-medium p-2 border-1 rounded-lg cursor-pointer text-primary flex gap-2 items-center"
+                            accept={'.jpg,.jpeg,.pdf,.jpg,.jpeg,.png'}
+                            onChange={(e) =>
+                              handleFileUpload(e, `screenshot`, setFieldValue)
+                            }
+                            onBlur={handleBlur}
+                          />
+                        </div>
+                      </Form>
+                    )}
+                  </Formik>
+                ))}
+              </section>
+              <div className="flex mt-2 gap-2 items-center">
+                {!!selectedPayments.length && (
+                  <Button
+                    type="button"
+                    color="danger"
+                    label="Delete"
+                    onClick={handlePaymentDelete}
+                    className="text-white text-small py-1 flex gap-2 items-center mb-2"
+                  />
+                )}
                 <Button
                   type="button"
-                  color="danger"
-                  label="Delete"
-                  onClick={handlePaymentDelete}
-                  className="text-white text-small py-1 flex gap-2 items-center mb-2"
-                />
-              )}
-              <Button
-                type="button"
-                className="text-primary border-2 bg-white border-primary text-small py-1 flex gap-2 items-center mb-2"
-                onClick={() =>
+                  className="text-primary border-2 bg-white border-primary text-small py-1 flex gap-2 items-center mb-2"
+                  onClick={() =>
+                    //@ts-ignore
+                    setPaymentsList((cv) => [
+                      ...cv,
+                      {
+                        account_details: '',
+                        amount_paid_to_college: 0,
+                        amount_received_from_student: 0,
+                        date_of_payment: moment().format('YYYY/MM/DD'),
+                        id: 0,
+                        payment_screenshot: '',
+                        remarks: '',
+                        isNew: true,
+                      },
+                    ])
+                  }
                   //@ts-ignore
-                  setPaymentsList((cv) => [
-                    ...cv,
-                    {
-                      account_details: '',
-                      amount_paid_to_college: 0,
-                      amount_received_from_student: 0,
-                      date_of_payment: moment().format('YYYY/MM/DD'),
-                      id: 0,
-                      payment_screenshot: '',
-                      remarks: '',
-                      isNew: true,
-                    },
-                  ])
-                }
-                //@ts-ignore
-                label={
-                  <div className="flex gap-2 items-center">
-                    {GetIcons('add')} Add New Installment
-                  </div>
-                }
-              />
-            </div>
-          </>
-        </AccordionItem>
+                  label={
+                    <div className="flex gap-2 items-center">
+                      {GetIcons('add')} Add New Installment
+                    </div>
+                  }
+                />
+              </div>
+            </>
+          </AccordionItem>
+        )}
       </Accordion>
     </div>
   );
