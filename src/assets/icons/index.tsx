@@ -20,7 +20,9 @@ import GoldIcon from './_gold';
 import Info from './_info';
 import KebabIcon from './_kebabIcon';
 import Menu from './_menu';
+import MoreIcon from './_moreIcon';
 import NotificationIcon from './_notification';
+import PlusIcon from './_plus';
 import SilverIcon from './_silver';
 import Students from './_students';
 import Upload from './_upload';
@@ -52,6 +54,8 @@ const iconObject: { [key: string]: JSX.Element } = {
   Bronze: <BronzeIcon />,
   Notification: <NotificationIcon />,
   'attendence-list': <Attendence />,
+  MoreIcon: <MoreIcon />,
+  plus: <PlusIcon />,
 };
 const GetIcons = (iconName = 'default'): JSX.Element => {
   return iconObject[iconName] || iconObject.default;
