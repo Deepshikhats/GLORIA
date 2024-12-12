@@ -42,7 +42,7 @@ const Filter: React.FC<FilterProps> = ({
         {GetIcons('filter')}
       </button>
       {openFilter && (
-        <div className="bg-white flex flex-col gap-2 p-2 absolute z-50 right-0 w-72 mt-1 shadow-lg rounded-lg">
+        <div className="bg-white flex flex-col gap-2 p-2 absolute z-50 right-0 w-fit md:w-72 mt-1 shadow-lg rounded-lg">
           <Accordion
             accOptions={accOptions}
             selectedItems={selectedItems}

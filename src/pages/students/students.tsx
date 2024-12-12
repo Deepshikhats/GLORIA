@@ -1,6 +1,10 @@
 import Table from '@/components/table';
 import PATH from '@/routes/paths';
-import { deleteStudents, downloadStudentPdf, ListStudents } from '@/services/studentService';
+import {
+  deleteStudents,
+  downloadStudentPdf,
+  ListStudents,
+} from '@/services/studentService';
 import useStore from '@/store/store';
 import {
   colorMapping,
@@ -34,7 +38,7 @@ const Students = () => {
     [key: string]: string[];
   }>({});
 
-  console.log("Selected ", selectedRow)
+  console.log('Selected ', selectedRow);
   /********************************SERVICE CALLS************************************** */
   const { data, isLoading, mutate } = useSWR(
     `${swrKeys.STUDENTS}-${page}`,
@@ -88,7 +92,6 @@ const Students = () => {
       .then((value) => notify(value, { type: 'success' }))
       .finally(() => setIsDltLoading(false));
   };
-  
 
   /********************************CUSTOM METHODS************************************** */
 
@@ -100,7 +103,8 @@ const Students = () => {
         : setShowAdmitStudentModal(true);
     } else if (action === 'delete') {
       setShowDeleteModal(true);
-    } else if (action === 'download') {  // Add this part for PDF download
+    } else if (action === 'download') {
+      // Add this part for PDF download
       handleDownloadPdf(rowData.id);
     }
   };
@@ -136,9 +140,10 @@ const Students = () => {
   };
 
   const isRowEditDisabled = useMemo(
-    () => (_data?: IStudent, action?: 'edit' | 'delete' | 'view' | 'download') => {
-      return action === 'edit' ? is_admin : false;
-    },
+    () =>
+      (_data?: IStudent, action?: 'edit' | 'delete' | 'view' | 'download') => {
+        return action === 'edit' ? is_admin : false;
+      },
     [is_admin]
   );
 
@@ -170,6 +175,7 @@ const Students = () => {
           totalCount={data?.count}
           accOptions={studentFilterOptions}
           setCurrentPage={setPage}
+          showDownloadBtn={true}
           //@ts-ignore
           selectedItems={selectedFilter}
           //@ts-ignore
