@@ -2,6 +2,7 @@ const PATH = {
   dashboard: '/dashboard',
   auth: '/auth',
   employees: '/employees',
+  agents: '/agents',
   addEmployees: '/employees/add-employees',
   editEmployee: '/employees/edit-employee/:id',
   students: '/students',
