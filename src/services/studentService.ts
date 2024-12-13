@@ -167,13 +167,15 @@ export const DeletePayments = async ({
 export const EditPayments = async ({
   payload,
   id,
+  p_id,
 }: {
   payload: FormData;
   id: string;
+  p_id: number;
 }) => {
   try {
     const response = await privateAPI.put(
-      `employee/students/${id}/payments/`,
+      `employee/students/${id}/payments/${p_id}/`,
       payload,
       {
         headers: {
