@@ -19,6 +19,9 @@ interface AsyncSelectProps
     false
   > {
   label: string;
+  showError?: boolean;
+  isInvalid?: boolean;
+  errorText?: string;
 }
 
 type AsyncPaginateCreatableProps<
@@ -39,7 +42,13 @@ type AsyncPaginateCreatableType = <
   props: AsyncPaginateCreatableProps<OptionType, Group, Additional, IsMulti>
 ) => ReactElement;
 
-const AsyncSelect: React.FC<AsyncSelectProps> = ({ label, ...props }) => {
+const AsyncSelect: React.FC<AsyncSelectProps> = ({
+  label,
+  showError,
+  isInvalid,
+  errorText,
+  ...props
+}) => {
   const CreatableAsyncPaginate = withAsyncPaginate(
     Creatable
   ) as AsyncPaginateCreatableType;
@@ -54,10 +63,15 @@ const AsyncSelect: React.FC<AsyncSelectProps> = ({ label, ...props }) => {
         classNames={{
           menu: () => '!z-50 !text-small',
           control: () =>
-            '!border-0 !rounded-lg !shadow-none !bg-default-100 text-small !rounded-xl',
+            `!border-0 !rounded-lg !shadow-none  ${isInvalid ? '!bg-red-100' : '!bg-default-100'} text-small !rounded-xl`,
           placeholder: () => '!text-base',
         }}
       />
+      {showError && (
+        <div className="text-xs text-danger h-4 px-2">
+          {isInvalid ? errorText : ''}
+        </div>
+      )}
     </div>
   );
 };
