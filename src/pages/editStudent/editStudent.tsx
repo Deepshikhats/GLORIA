@@ -220,13 +220,19 @@ const EditStudent: React.FC = (): React.JSX.Element => {
     const formData = new FormData();
 
     Object.keys(payload).forEach((field) => {
-      const _field = payload.isNew ? field : `payments[0][${field}]`;
       if (field === 'date_of_payment') {
         //@ts-ignore
-        formData.set(_field, payload[field]?.replaceAll('/', '-'));
-      } else {
+        formData.set(field, payload[field]?.replaceAll('/', '-'));
+      } else if (field === 'id') return;
+      //@ts-ignore
+      else if (
+        field === 'payment_screenshot' &&
+        typeof payload?.[field] === 'string'
+      )
+        return;
+      else {
         //@ts-ignore
-        formData.set(_field, payload[field]);
+        formData.set(field, payload[field]);
       }
     });
     if (payload.isNew) {
@@ -238,8 +244,13 @@ const EditStudent: React.FC = (): React.JSX.Element => {
         mutate();
       });
     } else {
-      EditPayments({ payload: formData, id: location.state.id }).then((e) => {
+      EditPayments({
+        payload: formData,
+        id: location.state.id,
+        p_id: payload.id,
+      }).then((e) => {
         notify(e.message, { type: 'success' });
+        mutate();
       });
     }
   };
@@ -321,419 +332,417 @@ const EditStudent: React.FC = (): React.JSX.Element => {
           title={'Details'}
           className=" flex flex-col"
         >
-          {
-            <Formik
-              initialValues={
-                data || {
-                  status: '',
-                  student_response: [],
-                  mode_of_payment: '',
-                  amount_paid_to_agent: '',
-                  amount_paid_to_college: '',
-                  first_year: '',
-                  second_year: '',
-                  third_year: '',
-                  fourth_year: '',
-                  date_of_payment: '',
-                  passport_photo: '',
-                  SSLC: '',
-                  plus_two: '',
-                  aadhar: '',
-                  payments: [],
-                  other_documents: '',
-                  approval_status: '',
-                  admin_messages: '',
-                  staff_assigned: '',
-                  staff_assigned_full_name: '',
-                }
+          <Formik
+            initialValues={
+              data || {
+                status: '',
+                student_response: [],
+                mode_of_payment: '',
+                amount_paid_to_agent: '',
+                amount_paid_to_college: '',
+                first_year: '',
+                second_year: '',
+                third_year: '',
+                fourth_year: '',
+                date_of_payment: '',
+                passport_photo: '',
+                SSLC: '',
+                plus_two: '',
+                aadhar: '',
+                payments: [],
+                other_documents: '',
+                approval_status: '',
+                admin_messages: '',
+                staff_assigned: '',
+                staff_assigned_full_name: '',
               }
-              onSubmit={handleEmployeeRegister}
-              validationSchema={editStudentValidationSchema}
-              enableReinitialize={true}
-            >
-              {({
-                dirty,
-                values,
-                errors,
-                touched,
-                isSubmitting,
-                handleChange,
-                resetForm,
-                handleBlur,
-                handleSubmit,
-                setFieldValue,
-              }) => (
-                <form
-                  className="flex flex-col gap-4 p-4"
-                  onSubmit={handleSubmit}
-                >
-                  <h5 className="font-bold text-primary border-b py-1">
-                    Basic Info
-                  </h5>
-                  <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
-                    {Object.keys(values)
-                      .filter((field) => basicInfo.includes(field))
-                      .map((field, index) =>
-                        field === 'place' ? (
+            }
+            onSubmit={handleEmployeeRegister}
+            validationSchema={editStudentValidationSchema}
+            enableReinitialize={true}
+          >
+            {({
+              dirty,
+              values,
+              errors,
+              touched,
+              isSubmitting,
+              handleChange,
+              resetForm,
+              handleBlur,
+              handleSubmit,
+              setFieldValue,
+            }) => (
+              <form className="flex flex-col gap-4 p-4" onSubmit={handleSubmit}>
+                <h5 className="font-bold text-primary border-b py-1">
+                  Basic Info
+                </h5>
+                <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
+                  {Object.keys(values)
+                    .filter((field) => basicInfo.includes(field))
+                    .map((field, index) =>
+                      field === 'place' ? (
+                        <TextArea
+                          key={index}
+                          label={field.replace('_', ' ')}
+                          name={field}
+                          placeholder={field}
+                          labelPlacement="outside"
+                          maxRows={3}
+                          disabled={isFieldDisabled(field)}
+                          value={values?.[field]}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      ) : ['course', 'college'].includes(field) ? (
+                        <AsyncSelect
+                          label={`${field} Name*`}
+                          loadOptions={
+                            field === 'college'
+                              ? loadCollegeOptions
+                              : loadCourseOptions
+                          }
+                          value={{
+                            //@ts-ignore
+                            label: values?.[field],
+                            //@ts-ignore
+                            value: values?.[field],
+                          }}
+                          onChange={(e) => setFieldValue(field, e?.label)}
+                          //@ts-ignore
+                          isInvalid={touched?.[field] && !!errors?.[field]}
+                          showError={true}
+                          //@ts-ignore
+                          errorText={errors?.[field]}
+                        />
+                      ) : (
+                        <Input
+                          key={index}
+                          //@ts-ignore
+                          label={field.replaceAll('_', ' ')}
+                          name={field}
+                          placeholder={field}
+                          labelPlacement="outside"
+                          //@ts-ignore
+                          isInvalid={touched?.[field] && !!errors?.[field]}
+                          //@ts-ignore
+                          value={values?.[field]}
+                          disabled={isFieldDisabled(field)}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      )
+                    )}
+                </section>
+                <h5 className="font-bold text-primary border-b py-1">
+                  Fees Info
+                </h5>
+                <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
+                  {Object.keys(values)
+                    .filter((_fileld) => paymentFields.includes(_fileld))
+                    .map((field, index) => {
+                      if (['mode_of_payment'].includes(field)) {
+                        return (
+                          <Menu
+                            //@ts-ignore
+                            label={field.replaceAll('_', ' ')}
+                            //@ts-ignore
+                            options={mapDropDownOptions?.[field] || []}
+                            onSelectItem={({ value }) =>
+                              setFieldValue(field, value)
+                            }
+                            menuClass="w-full"
+                            disabled={isFieldDisabled(field)}
+                            isSelectable={true}
+                            selectedItem={
+                              //@ts-ignore
+                              mapDropDownOptions?.[field]?.find(
+                                (options: { value: any }) =>
+                                  //@ts-ignore
+                                  options.value === values?.[field]
+                              )?.label
+                            }
+                          />
+                        );
+                      } else if (field === 'date_of_payment') {
+                        return (
+                          <DatePicker
+                            dateFormat="dd/MM/yyyy"
+                            label="Date of Payment"
+                            selected={
+                              values[field]
+                                ? new Date(values[field])
+                                : new Date()
+                            }
+                            onChange={(date) =>
+                              setFieldValue(
+                                field,
+                                moment(date).format('YYYY/MM/DD')
+                              )
+                            }
+                          />
+                        );
+                      }
+                      return (
+                        <Input
+                          key={index}
+                          className={isFieldViewable(field) ? 'hidden' : ''}
+                          //@ts-ignore
+                          label={field.replaceAll('_', ' ')}
+                          name={field}
+                          placeholder={field}
+                          labelPlacement="outside"
+                          //@ts-ignore
+                          isInvalid={touched?.[field] && !!errors?.[field]}
+                          //@ts-ignore
+
+                          value={values?.[field]}
+                          disabled={isFieldDisabled(field)}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      );
+                    })}
+                </section>
+
+                <h5 className="font-bold text-primary border-b py-1">Others</h5>
+                <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
+                  {Object.keys(values)
+                    .filter(
+                      (_fileld) =>
+                        ![
+                          ...basicInfo,
+                          ...docFields,
+                          ...paymentFields,
+                          'id',
+                          'staff_assigned',
+                          'admitted_by',
+                          'student_response',
+                          'payments',
+                          ...(values?.course !== 'Bsc Nursing'
+                            ? ['KEA_id', 'password']
+                            : ''),
+                        ].includes(_fileld)
+                    )
+                    .map((field, index) => {
+                      if (['admin_messages', 'admin_notes'].includes(field)) {
+                        return (
                           <TextArea
                             key={index}
                             label={field.replace('_', ' ')}
                             name={field}
                             placeholder={field}
+                            containerClass={
+                              field === 'admin_notes' && !is_admin
+                                ? 'hidden'
+                                : ''
+                            }
                             labelPlacement="outside"
                             maxRows={3}
                             disabled={isFieldDisabled(field)}
+                            //@ts-ignore
                             value={values?.[field]}
                             onChange={handleChange}
                             onBlur={handleBlur}
                           />
-                        ) : ['course', 'college'].includes(field) ? (
-                          <AsyncSelect
-                            label={`${field} Name*`}
-                            loadOptions={
-                              field === 'college'
-                                ? loadCollegeOptions
-                                : loadCourseOptions
+                        );
+                      } else if (
+                        [
+                          'status',
+                          'approval_status',
+                          'course_status',
+                          'gender',
+                          'blood_group',
+                        ].includes(field)
+                      ) {
+                        return (
+                          <Menu
+                            //@ts-ignore
+                            label={field.replaceAll('_', ' ')}
+                            //@ts-ignore
+                            options={mapDropDownOptions?.[field] || []}
+                            onSelectItem={({ value }) =>
+                              setFieldValue(field, value)
                             }
-                            value={{
+                            menuClass="w-full"
+                            disabled={isFieldDisabled(field)}
+                            isSelectable={true}
+                            selectedItem={
                               //@ts-ignore
+                              mapDropDownOptions?.[field]?.find(
+                                (options: { value: any }) =>
+                                  //@ts-ignore
+                                  options.value === values?.[field]
+                              )?.label
+                            }
+                          />
+                        );
+                      } else if (field === 'staff_assigned_full_name') {
+                        return (
+                          <AsyncSelect
+                            //@ts-ignore
+                            loadOptions={loadOptions}
+                            isDisabled={!is_admin}
+                            //@ts-ignore
+                            label={field.replaceAll('_', ' ')}
+                            additional={{ page: 1 }}
+                            value={{
                               label: values?.[field],
                               //@ts-ignore
-                              value: values?.[field],
+                              value: values?.['staff_assigned'],
                             }}
-                            onChange={(e) => setFieldValue(field, e?.label)}
-                          />
-                        ) : (
-                          <Input
-                            key={index}
-                            //@ts-ignore
-                            label={field.replaceAll('_', ' ')}
-                            name={field}
-                            placeholder={field}
-                            labelPlacement="outside"
-                            //@ts-ignore
-                            isInvalid={touched?.[field] && !!errors?.[field]}
-                            //@ts-ignore
-                            value={values?.[field]}
-                            disabled={isFieldDisabled(field)}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                        )
-                      )}
-                  </section>
-                  <h5 className="font-bold text-primary border-b py-1">
-                    Fees Info
-                  </h5>
-                  <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
-                    {Object.keys(values)
-                      .filter((_fileld) => paymentFields.includes(_fileld))
-                      .map((field, index) => {
-                        if (['mode_of_payment'].includes(field)) {
-                          return (
-                            <Menu
-                              //@ts-ignore
-                              label={field.replaceAll('_', ' ')}
-                              //@ts-ignore
-                              options={mapDropDownOptions?.[field] || []}
-                              onSelectItem={({ value }) =>
-                                setFieldValue(field, value)
-                              }
-                              menuClass="w-full"
-                              disabled={isFieldDisabled(field)}
-                              isSelectable={true}
-                              selectedItem={
-                                //@ts-ignore
-                                mapDropDownOptions?.[field]?.find(
-                                  (options: { value: any }) =>
-                                    //@ts-ignore
-                                    options.value === values?.[field]
-                                )?.label
-                              }
-                            />
-                          );
-                        } else if (field === 'date_of_payment') {
-                          return (
-                            <DatePicker
-                              dateFormat="dd/MM/yyyy"
-                              label="Date of Payment"
-                              selected={
-                                values[field]
-                                  ? new Date(values[field])
-                                  : new Date()
-                              }
-                              onChange={(date) =>
-                                setFieldValue(
-                                  field,
-                                  moment(date).format('YYYY/MM/DD')
-                                )
-                              }
-                            />
-                          );
-                        }
-                        return (
-                          <Input
-                            key={index}
-                            className={isFieldViewable(field) ? 'hidden' : ''}
-                            //@ts-ignore
-                            label={field.replaceAll('_', ' ')}
-                            name={field}
-                            placeholder={field}
-                            labelPlacement="outside"
-                            //@ts-ignore
-                            isInvalid={touched?.[field] && !!errors?.[field]}
-                            //@ts-ignore
-
-                            value={values?.[field]}
-                            disabled={isFieldDisabled(field)}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
+                            onChange={(e) => {
+                              setFieldValue('staff_assigned', e?.value);
+                              setFieldValue(
+                                'staff_assigned_full_name',
+                                e?.label
+                              );
+                            }}
                           />
                         );
-                      })}
-                  </section>
+                      }
+                      return (
+                        <Input
+                          key={index}
+                          //@ts-ignore
+                          label={field.replaceAll('_', ' ')}
+                          name={field}
+                          placeholder={field}
+                          labelPlacement="outside"
+                          //@ts-ignore
+                          isInvalid={touched?.[field] && !!errors?.[field]}
+                          //@ts-ignore
 
-                  <h5 className="font-bold text-primary border-b py-1">
-                    Others
-                  </h5>
-                  <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
-                    {Object.keys(values)
-                      .filter(
-                        (_fileld) =>
-                          ![
-                            ...basicInfo,
-                            ...docFields,
-                            ...paymentFields,
-                            'id',
-                            'staff_assigned',
-                            'admitted_by',
-                            'student_response',
-                            'payments',
-                            ...(values?.course !== 'Bsc Nursing'
-                              ? ['KEA_id', 'password']
-                              : ''),
-                          ].includes(_fileld)
-                      )
-                      .map((field, index) => {
-                        if (['admin_messages', 'admin_notes'].includes(field)) {
-                          return (
-                            <TextArea
+                          value={values?.[field]}
+                          disabled={isFieldDisabled(field)}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      );
+                    })}
+                </section>
+
+                {!location.state?.is_admitted && (
+                  <FieldArray
+                    name="student_response"
+                    render={(arrayHelpers) => (
+                      <>
+                        <h5 className="font-bold text-primary border-b py-1">
+                          Student Response
+                        </h5>
+                        <div>
+                          <button
+                            type="button"
+                            className="text-primary text-base py-1 flex gap-2 items-center"
+                            onClick={() => arrayHelpers.push('')}
+                          >
+                            Add new response {GetIcons('add')}
+                          </button>
+
+                          <section className="grid grid-cols-1 gap-4 gap-y-8 md:grid-cols-2">
+                            {values?.['student_response']?.map(
+                              (calls: string, _ind: number) => (
+                                <div className="flex gap-2 w-full" key={_ind}>
+                                  <TextArea
+                                    key={_ind}
+                                    label={`calls ${_ind + 1}`}
+                                    name={`student_response.${_ind}`}
+                                    labelPlacement="outside"
+                                    maxRows={3}
+                                    disabled={isFieldDisabled(
+                                      'student_response'
+                                    )}
+                                    value={calls}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    containerClass="w-full"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => arrayHelpers.remove(_ind)}
+                                  >
+                                    {GetIcons('delete')}
+                                  </button>
+                                </div>
+                              )
+                            )}
+                          </section>
+                        </div>
+                      </>
+                    )}
+                  ></FieldArray>
+                )}
+                {location.state?.is_admitted && (
+                  <>
+                    <h5 className="font-bold text-primary border-b py-1">
+                      Documnets
+                    </h5>
+                    <div className="flex gap-2 items-center text-red-500 text-sm">
+                      <span>{GetIcons('info')} </span>
+                      File size is limited to 4MB for pdf and 2MB for images
+                    </div>
+                    <section className="grid grid-cols-1 gap-4 gap-y-8 md:grid-cols-2">
+                      {Object.keys(values)
+                        .filter((field) => docFields.includes(field))
+                        .map((field, index) => (
+                          <div className="flex flex-col gap-2">
+                            <label
                               key={index}
-                              label={field.replace('_', ' ')}
-                              name={field}
-                              placeholder={field}
-                              containerClass={
-                                field === 'admin_notes' && !is_admin
-                                  ? 'hidden'
-                                  : ''
-                              }
-                              labelPlacement="outside"
-                              maxRows={3}
-                              disabled={isFieldDisabled(field)}
-                              //@ts-ignore
-                              value={values?.[field]}
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                            />
-                          );
-                        } else if (
-                          [
-                            'status',
-                            'approval_status',
-                            'course_status',
-                            'gender',
-                            'blood_group',
-                          ].includes(field)
-                        ) {
-                          return (
-                            <Menu
-                              //@ts-ignore
-                              label={field.replaceAll('_', ' ')}
-                              //@ts-ignore
-                              options={mapDropDownOptions?.[field] || []}
-                              onSelectItem={({ value }) =>
-                                setFieldValue(field, value)
-                              }
-                              menuClass="w-full"
-                              disabled={isFieldDisabled(field)}
-                              isSelectable={true}
-                              selectedItem={
-                                //@ts-ignore
-                                mapDropDownOptions?.[field]?.find(
-                                  (options: { value: any }) =>
-                                    //@ts-ignore
-                                    options.value === values?.[field]
-                                )?.label
-                              }
-                            />
-                          );
-                        } else if (field === 'staff_assigned_full_name') {
-                          return (
-                            <AsyncSelect
-                              //@ts-ignore
-                              loadOptions={loadOptions}
-                              isDisabled={!is_admin}
-                              //@ts-ignore
-                              label={field.replaceAll('_', ' ')}
-                              additional={{ page: 1 }}
-                              value={{
-                                label: values?.[field],
-                                //@ts-ignore
-                                value: values?.['staff_assigned'],
-                              }}
-                              onChange={(e) => {
-                                setFieldValue('staff_assigned', e?.value);
-                                setFieldValue(
-                                  'staff_assigned_full_name',
-                                  e?.label
-                                );
-                              }}
-                            />
-                          );
-                        }
-                        return (
-                          <Input
-                            key={index}
-                            //@ts-ignore
-                            label={field.replaceAll('_', ' ')}
-                            name={field}
-                            placeholder={field}
-                            labelPlacement="outside"
-                            //@ts-ignore
-                            isInvalid={touched?.[field] && !!errors?.[field]}
-                            //@ts-ignore
-
-                            value={values?.[field]}
-                            disabled={isFieldDisabled(field)}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
-                        );
-                      })}
-                  </section>
-
-                  {!location.state?.is_admitted && (
-                    <FieldArray
-                      name="student_response"
-                      render={(arrayHelpers) => (
-                        <>
-                          <h5 className="font-bold text-primary border-b py-1">
-                            Student Response
-                          </h5>
-                          <div>
-                            <button
-                              type="button"
-                              className="text-primary text-base py-1 flex gap-2 items-center"
-                              onClick={() => arrayHelpers.push('')}
+                              htmlFor={field}
+                              className="capitalize"
                             >
-                              Add new response {GetIcons('add')}
-                            </button>
-
-                            <section className="grid grid-cols-1 gap-4 gap-y-8 md:grid-cols-2">
-                              {values?.['student_response']?.map(
-                                (calls: string, _ind: number) => (
-                                  <div className="flex gap-2 w-full" key={_ind}>
-                                    <TextArea
-                                      key={_ind}
-                                      label={`calls ${_ind + 1}`}
-                                      name={`student_response.${_ind}`}
-                                      labelPlacement="outside"
-                                      maxRows={3}
-                                      disabled={isFieldDisabled(
-                                        'student_response'
-                                      )}
-                                      value={calls}
-                                      onChange={handleChange}
-                                      onBlur={handleBlur}
-                                      containerClass="w-full"
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() => arrayHelpers.remove(_ind)}
-                                    >
-                                      {GetIcons('delete')}
-                                    </button>
-                                  </div>
-                                )
-                              )}
-                            </section>
-                          </div>
-                        </>
-                      )}
-                    ></FieldArray>
-                  )}
-                  {location.state?.is_admitted && (
-                    <>
-                      <h5 className="font-bold text-primary border-b py-1">
-                        Documnets
-                      </h5>
-                      <div className="flex gap-2 items-center text-red-500 text-sm">
-                        <span>{GetIcons('info')} </span>
-                        File size is limited to 4MB for pdf and 2MB for images
-                      </div>
-                      <section className="grid grid-cols-1 gap-4 gap-y-8 md:grid-cols-2">
-                        {Object.keys(values)
-                          .filter((field) => docFields.includes(field))
-                          .map((field, index) => (
-                            <div className="flex flex-col gap-2">
-                              <label
-                                key={index}
-                                htmlFor={field}
-                                className="capitalize"
+                              {field.replace('_', ' ')}
+                            </label>
+                            {/*@ts-ignore  */}
+                            {values[field] && (
+                              <a
+                                href={`${import.meta.env.VITE_BASE_URL}/${values?.[field as keyof typeof values]}`}
+                                target="_blank"
+                                className="text-blue-600"
                               >
-                                {field.replace('_', ' ')}
-                              </label>
-                              {/*@ts-ignore  */}
-                              {values[field] && (
-                                <a
-                                  href={`${import.meta.env.VITE_BASE_URL}/${values?.[field as keyof typeof values]}`}
-                                  target="_blank"
-                                  className="text-blue-600"
-                                >
-                                  Click to view
-                                </a>
-                              )}
-                              <input
-                                type="file"
-                                name={field}
-                                id={field}
-                                className="font-medium p-2 border-1 rounded-lg cursor-pointer text-primary flex gap-2 items-center"
-                                accept={
-                                  field === 'passport_photo'
-                                    ? '.jpg,.jpeg'
-                                    : '.pdf,.jpg,.jpeg'
-                                }
-                                onChange={(e) =>
-                                  handleFileUpload(e, field, setFieldValue)
-                                }
-                                onBlur={handleBlur}
-                                disabled={isFieldDisabled(field)}
-                              />
-                            </div>
-                          ))}
-                      </section>
-                    </>
-                  )}
-                  <div className="col-span-2 flex items-center gap-3">
-                    <Button
-                      label="Discard"
-                      color="danger"
-                      type="button"
-                      disabled={!dirty}
-                      onClick={() => resetForm()}
-                    />
-                    <Button
-                      label="Submit"
-                      color="success"
-                      type="submit"
-                      isLoading={isSubmitting}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                </form>
-              )}
-            </Formik>
-          }
+                                Click to view
+                              </a>
+                            )}
+                            <input
+                              type="file"
+                              name={field}
+                              id={field}
+                              className="font-medium p-2 border-1 rounded-lg cursor-pointer text-primary flex gap-2 items-center"
+                              accept={
+                                field === 'passport_photo'
+                                  ? '.jpg,.jpeg'
+                                  : '.pdf,.jpg,.jpeg'
+                              }
+                              onChange={(e) =>
+                                handleFileUpload(e, field, setFieldValue)
+                              }
+                              onBlur={handleBlur}
+                              disabled={isFieldDisabled(field)}
+                            />
+                          </div>
+                        ))}
+                    </section>
+                  </>
+                )}
+                <div className="col-span-2 flex items-center gap-3">
+                  <Button
+                    label="Discard"
+                    color="danger"
+                    type="button"
+                    disabled={!dirty}
+                    onClick={() => resetForm()}
+                  />
+                  <Button
+                    label="Submit"
+                    color="success"
+                    type="submit"
+                    isLoading={isSubmitting}
+                    disabled={isSubmitting}
+                  />
+                </div>
+              </form>
+            )}
+          </Formik>
         </AccordionItem>
         {location?.state?.is_admitted && (
           <AccordionItem
@@ -831,7 +840,8 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                           errorText={errors.amount_received_from_student}
                           value={values.amount_received_from_student}
                           onChange={(e) =>
-                            /^\d*$/.test(e.target.value) && handleChange(e)
+                            /^(\d+(\.\d*)?|\.\d+)?$/.test(e.target.value) &&
+                            handleChange(e)
                           }
                           onBlur={handleBlur}
                         />
@@ -848,7 +858,8 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                           value={values.amount_paid_to_college}
                           errorText={errors.amount_paid_to_college}
                           onChange={(e) =>
-                            /^\d*$/.test(e.target.value) && handleChange(e)
+                            /^(\d+(\.\d*)?|\.\d+)?$/.test(e.target.value) &&
+                            handleChange(e)
                           }
                           onBlur={handleBlur}
                         />
@@ -884,14 +895,28 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                           >
                             Screenshot of payment
                           </label>
+
+                          {values?.payment_screenshot && (
+                            <a
+                              href={`${import.meta.env.VITE_BASE_URL}/${values?.['payment_screenshot']}`}
+                              target="_blank"
+                              className="text-blue-600"
+                            >
+                              Click to view
+                            </a>
+                          )}
                           <input
                             type="file"
-                            name={'screenshot'}
-                            id={'screenshot'}
+                            name={'payment_screenshot'}
+                            id={'payment_screenshot'}
                             className="font-medium p-2 border-1 rounded-lg cursor-pointer text-primary flex gap-2 items-center"
                             accept={'.jpg,.jpeg,.pdf,.jpg,.jpeg,.png'}
                             onChange={(e) =>
-                              handleFileUpload(e, `screenshot`, setFieldValue)
+                              handleFileUpload(
+                                e,
+                                `payment_screenshot`,
+                                setFieldValue
+                              )
                             }
                             onBlur={handleBlur}
                           />
