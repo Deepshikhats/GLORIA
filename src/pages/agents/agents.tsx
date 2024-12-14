@@ -66,6 +66,7 @@ const Agents = () => {
         showEyeBtn={false}
         showDownloadBtn={false}
         handleRowAction={handleRowActions}
+        showBtn={false}
       />
       <Modals.ConfirmationModal
         isOpen={showDeleteModal}
