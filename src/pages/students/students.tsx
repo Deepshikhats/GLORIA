@@ -12,8 +12,8 @@ import {
   studentFilterOptions,
   swrKeys,
 } from '@/utils/constants';
-import { notify } from '@/utils/helpers/helpers';
-import { Fragment, useMemo, useState } from 'react';
+import { debounce, notify } from '@/utils/helpers/helpers';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import Modals from '../../modals';
@@ -34,6 +34,7 @@ const Students = () => {
     useState<boolean>(false);
   const [selectedRow, setSelectedRow] = useState<IStudent>();
   const [isDltLoading, setIsDltLoading] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>('');
   const [selectedFilter, setSelectedFilter] = useState<{
     [key: string]: string[];
   }>({});
@@ -51,6 +52,7 @@ const Students = () => {
         id: is_admin ? '' : id,
         //@ts-ignore
         student_status: selectedFilter['Student Status'] || '',
+        search: searchValue,
       });
       //@ts-ignore
       return {
@@ -68,6 +70,14 @@ const Students = () => {
       revalidateOnReconnect: true,
     }
   );
+
+  useEffect(() => {
+    const debouncedMutate = debounce(() => mutate());
+    debouncedMutate();
+    return () => {
+      debouncedMutate.cancel();
+    };
+  }, [searchValue]);
 
   const handleHeaderActions = (action: TOption) => {
     if (action.value === 'delete') {
@@ -103,8 +113,11 @@ const Students = () => {
     } else if (action === 'delete') {
       setShowDeleteModal(true);
     } else if (action === 'download') {
-      // Add this part for PDF download
-      handleDownloadPdf(rowData.id);
+      rowData.is_admitted
+        ? handleDownloadPdf(rowData.id)
+        : notify('Details are available only for admitted students', {
+            type: 'warning',
+          });
     }
   };
 
@@ -174,6 +187,7 @@ const Students = () => {
           totalCount={data?.count}
           accOptions={studentFilterOptions}
           setCurrentPage={setPage}
+          isSearchable={true}
           showDownloadBtn={true}
           //@ts-ignore
           selectedItems={selectedFilter}
@@ -192,6 +206,8 @@ const Students = () => {
           checkboxSelection={true}
           showEyeBtn={false}
           showActions={showActions}
+          searchValue={searchValue}
+          setSearchValue={setSearchValue}
           handleHeaderAction={handleHeaderActions}
           isRowActionDisabled={isRowEditDisabled}
           onRowClick={onRowClick}

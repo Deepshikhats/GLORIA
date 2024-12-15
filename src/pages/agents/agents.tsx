@@ -2,8 +2,8 @@ import Table from '@/components/table';
 import PATH from '@/routes/paths';
 import { DeleteEmployee, ListEmployees } from '@/services/employeeService';
 import { colorMapping, employeeColums, swrKeys } from '@/utils/constants';
-import { notify } from '@/utils/helpers/helpers';
-import React, { useState } from 'react';
+import { debounce, notify } from '@/utils/helpers/helpers';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import Modals from '../../modals';
@@ -14,10 +14,12 @@ const Agents = () => {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [selectedRow, setSelectedRow] = useState<IEmployee>();
   const [isDLoading, setIsDLoading] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>('');
 
   const { data, isLoading, mutate } = useSWR(
     `${swrKeys.AGENTS}-${page}`,
-    () => ListEmployees({ limit: 10, page, type: 'Agents' }),
+    () =>
+      ListEmployees({ limit: 10, page, type: 'Agents', search: searchValue }),
     {
       keepPreviousData: true,
       revalidateIfStale: false,
@@ -25,6 +27,13 @@ const Agents = () => {
       revalidateOnReconnect: true,
     }
   );
+  useEffect(() => {
+    const debouncedMutate = debounce(() => mutate());
+    debouncedMutate();
+    return () => {
+      debouncedMutate.cancel();
+    };
+  }, [searchValue]);
 
   const handleEmployeeDelete = () => {
     setIsDLoading(true);
@@ -65,6 +74,9 @@ const Agents = () => {
         checkboxSelection={true}
         showEyeBtn={false}
         showDownloadBtn={false}
+        isSearchable={true}
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
         handleRowAction={handleRowActions}
         showBtn={false}
       />
