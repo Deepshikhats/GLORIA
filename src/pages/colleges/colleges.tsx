@@ -7,7 +7,7 @@ import {
 } from '@/services/collegeService';
 import useStore from '@/store/store';
 import { collegeColums, swrKeys } from '@/utils/constants';
-import { notify } from '@/utils/helpers/helpers';
+import { debounce, notify } from '@/utils/helpers/helpers';
 import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
@@ -53,7 +53,11 @@ const Colleges: React.FC = () => {
   );
 
   useEffect(() => {
-    mutate();
+    const debouncedMutate = debounce(() => mutate());
+    debouncedMutate();
+    return () => {
+      debouncedMutate.cancel();
+    };
   }, [collegeName]);
 
   const handleCollegeDelete = () => {

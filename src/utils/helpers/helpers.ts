@@ -23,3 +23,21 @@ export const getLocalStorage = (key: string) => {
 };
 export const notify = (message: string, options: ToastOptions) =>
   toast(message, { ...options, pauseOnHover: false, autoClose: 3000 });
+
+export const debounce = <T extends (...args: any[]) => any>(
+  func: T,
+  delay = 900
+): { (...args: Parameters<T>): void; cancel: () => void } => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+
+  const debouncedFunction = (...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+
+  debouncedFunction.cancel = () => {
+    clearTimeout(timeoutId);
+  };
+
+  return debouncedFunction;
+};

@@ -70,7 +70,8 @@ const Menu: React.FC<MenuProps> = ({
         {options.map((option, index) => (
           <li
             key={index}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               onSelectItem(option);
               setShowMenu(false);
             }}

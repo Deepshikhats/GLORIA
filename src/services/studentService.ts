@@ -7,10 +7,11 @@ export const ListStudents = async ({
   id = '',
   type = 'all',
   student_status,
+  search,
 }: IListStudents) => {
   try {
     const response = await privateAPI.get(
-      `employee/filtered-students/?page=${page}&page_size=${limit}&type=${type}&student_status=${student_status}&employee_id=${id}`
+      `employee/filtered-students/?page=${page}&page_size=${limit}&type=${type}&student_status=${student_status}&employee_id=${id}&search=${search}`
     );
     return response.data;
   } catch (error) {
