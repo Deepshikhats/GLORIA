@@ -33,7 +33,7 @@ export const Navbar: React.FC<{
           .filter(
             (_item) =>
               isAdmin ||
-              !['employees', 'dashboard', 'attendence-list'].includes(_item)
+              !['employees','agents', 'dashboard', 'attendence-list'].includes(_item)
           )
           .map((item, index: number) => (
             <span

@@ -3,12 +3,14 @@ import GetIcons from '@/assets/icons';
 export const navItems: string[] = [
   'dashboard',
   'employees',
+  'agents',
   'students',
   'colleges',
   'attendence-list',
 ];
 export const swrKeys = {
   EMPLOYEES: 'employees',
+  AGENTS: 'agents',
   STUDENTS: 'students',
   VIEW_STUDENT: 'view_student',
   USER_DETAILS: 'user_details',

@@ -11,6 +11,7 @@ import Home from '../pages/home';
 const Auth = lazy(() => import('@/pages/auth'));
 const Dashboard = lazy(() => import('@/pages/dashboard'));
 const Employees = lazy(() => import('@/pages/employees'));
+const Agents = lazy(() => import('@/pages/agents'));
 const Students = lazy(() => import('@/pages/students'));
 const AddEmployee = lazy(() => import('@/pages/addEmployee'));
 const AddStudents = lazy(() => import('@/pages/addStudents'));
@@ -58,6 +59,10 @@ const Router = createBrowserRouter([
           {
             path: PATH.employees,
             element: <Employees />,
+          },
+          {
+            path: PATH.agents,
+            element: <Agents />,
           },
           {
             path: PATH.students,

@@ -16,6 +16,7 @@ interface IRegister {
 interface IListTableData {
   page: number;
   limit: number;
+  type?: string;
   search?: string;
 }
 interface IListEmployees_R {
