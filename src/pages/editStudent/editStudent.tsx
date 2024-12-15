@@ -825,6 +825,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                             !!errors?.account_details
                           }
                           value={values.account_details}
+                          disabled={data?.approval_status === 'approved'}
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
@@ -839,6 +840,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                           }
                           errorText={errors.amount_received_from_student}
                           value={values.amount_received_from_student}
+                          disabled={data?.approval_status === 'approved'}
                           onChange={(e) =>
                             /^(\d+(\.\d*)?|\.\d+)?$/.test(e.target.value) &&
                             handleChange(e)
@@ -856,6 +858,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                             !!errors?.amount_paid_to_college
                           }
                           value={values.amount_paid_to_college}
+                          disabled={data?.approval_status === 'approved'}
                           errorText={errors.amount_paid_to_college}
                           onChange={(e) =>
                             /^(\d+(\.\d*)?|\.\d+)?$/.test(e.target.value) &&
@@ -878,6 +881,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                             )
                           }
                           maxDate={new Date()}
+                          disabled={data?.approval_status === 'approved'}
                         />
                         <TextArea
                           label={'Remark'}
@@ -887,6 +891,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                           value={values.remarks}
                           onChange={handleChange}
                           onBlur={handleBlur}
+                          disabled={data?.approval_status === 'approved'}
                         />
                         <div className="flex flex-col gap-2">
                           <label
@@ -920,6 +925,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                               )
                             }
                             onBlur={handleBlur}
+                            disabled={data?.approval_status === 'approved'}
                           />
                         </div>
                       </Form>
@@ -939,6 +945,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                 )}
                 <Button
                   type="button"
+                  disabled={data?.approval_status === 'approved'}
                   className="text-primary border-2 bg-white border-primary text-small py-1 flex gap-2 items-center mb-2"
                   onClick={() =>
                     //@ts-ignore
