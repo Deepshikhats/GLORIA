@@ -23,10 +23,14 @@ export const BulkRegister = async (payload: TBulkRegister) => {
   }
 };
 
-export const ListEmployees = async ({ limit, page }: IListTableData) => {
+export interface IListEmployeesParams extends IListTableData {
+  type?: 'Employees' | 'Agents' | 'Admins';
+}
+
+export const ListEmployees = async ({ limit, page, type }: IListEmployeesParams) => {
   try {
     const response = await privateAPI.get(
-      `admin/employees/?page=${page}&page_size=${limit}`
+      `admin/employees/?page=${page}&page_size=${limit}${type ? `&type=${type}` : ''}`
     );
     return response.data;
   } catch (error) {

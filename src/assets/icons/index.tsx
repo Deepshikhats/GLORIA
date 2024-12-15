@@ -1,3 +1,4 @@
+import Agents from './_agents';
 import Add from './_add';
 import FileAttach from './_attach';
 import Attendence from './_attendence';
@@ -31,6 +32,7 @@ const iconObject: { [key: string]: JSX.Element } = {
   default: <DefaultLoader />,
   dashboard: <Dashboard />,
   employees: <Employees />,
+  agents: <Agents />,
   students: <Students />,
   menu: <Menu />,
   close: <Close />,
