@@ -896,15 +896,16 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                             Screenshot of payment
                           </label>
 
-                          {values?.payment_screenshot && (
-                            <a
-                              href={`${import.meta.env.VITE_BASE_URL}/${values?.['payment_screenshot']}`}
-                              target="_blank"
-                              className="text-blue-600"
-                            >
-                              Click to view
-                            </a>
-                          )}
+                          {values?.payment_screenshot &&
+                            typeof values?.payment_screenshot === 'string' && (
+                              <a
+                                href={`${import.meta.env.VITE_BASE_URL}/${values?.['payment_screenshot']}`}
+                                target="_blank"
+                                className="text-blue-600"
+                              >
+                                Click to view
+                              </a>
+                            )}
                           <input
                             type="file"
                             name={'payment_screenshot'}
