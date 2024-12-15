@@ -38,7 +38,6 @@ const Students = () => {
     [key: string]: string[];
   }>({});
 
-  console.log('Selected ', selectedRow);
   /********************************SERVICE CALLS************************************** */
   const { data, isLoading, mutate } = useSWR(
     `${swrKeys.STUDENTS}-${page}`,
@@ -64,7 +63,7 @@ const Students = () => {
     },
     {
       keepPreviousData: true,
-      revalidateIfStale: false,
+      revalidateIfStale: true,
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
     }
