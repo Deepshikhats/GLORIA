@@ -37,7 +37,10 @@ const Menu: React.FC<MenuProps> = ({
       {showLabel && <span className="mb-2 block text-small">{label}</span>}
       <button
         className={`flex text-small h-10 w-full items-center justify-between rounded-xl  px-3 ${isInvalid ? 'bg-danger-50' : 'bg-default-100'} `}
-        onClick={() => !disabled && setShowMenu((cv) => !cv)}
+        onClick={(e) => {
+          e.stopPropagation();
+          !disabled && setShowMenu((cv) => !cv);
+        }}
         type="button"
         disabled={disabled}
       >
