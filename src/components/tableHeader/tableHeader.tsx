@@ -58,7 +58,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
             //@ts-ignore
             options={tableHeaderOptions}
             isKebabMenu={true}
-            containerClass="!w-fit"
+            containerClass="!w-fit relative"
             //@ts-ignore
             onSelectItem={handleHeaderAction}
           />

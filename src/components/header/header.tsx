@@ -55,18 +55,28 @@ export const Header: React.FC<{
             {GetIcons('menu')}
           </button>
         )}
-        <Button
-          label={'Attendence'}
-          color={'warning'}
-          onClick={() => setShowModal(true)}
-        />
+        {!userDetails?.is_agent && (
+          <Button
+            label={'Attendence'}
+            color={'warning'}
+            onClick={() => setShowModal(true)}
+          />
+        )}
         <div className="ml-auto inline-flex gap-1">
           <span
             className="flex-shrink-0 cursor-pointer bg-default p-1 rounded-full h-10 w-10"
-            onClick={() => navigate(PATH.notifications)}
+            onClick={() => navigate(PATH.students)}
           >
-            {GetIcons('Notification')}
+            {GetIcons('home')}
           </span>
+          {!userDetails?.is_agent && (
+            <span
+              className="flex-shrink-0 cursor-pointer bg-default p-1 rounded-full h-10 w-10"
+              onClick={() => navigate(PATH.notifications)}
+            >
+              {GetIcons('Notification')}
+            </span>
+          )}
           <Avatar classNames={{ base: 'block shrink-0 hidden lg:block' }} />
           <Menu
             title={userDetails?.first_name + ' ' + userDetails?.last_name}
@@ -75,6 +85,7 @@ export const Header: React.FC<{
             menuClass="!min-w-fit"
             options={headerMenuOptions}
             onSelectItem={handleAction}
+            containerClass="relative"
           />
         </div>
       </header>

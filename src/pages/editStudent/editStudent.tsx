@@ -444,6 +444,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                       if (['mode_of_payment'].includes(field)) {
                         return (
                           <Menu
+                            containerClass="relative"
                             //@ts-ignore
                             label={field.replaceAll('_', ' ')}
                             //@ts-ignore

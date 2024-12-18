@@ -33,7 +33,7 @@ const Menu: React.FC<MenuProps> = ({
   }, []);
 
   return (
-    <div className={`w-full relative ${containerClass}`} ref={menuRef}>
+    <div className={`w-full ${containerClass}`} ref={menuRef}>
       {showLabel && <span className="mb-2 block text-small">{label}</span>}
       <button
         className={`flex text-small h-10 w-full items-center justify-between rounded-xl  px-3 ${isInvalid ? 'bg-danger-50' : 'bg-default-100'} `}

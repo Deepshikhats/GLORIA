@@ -71,7 +71,7 @@ const Agents = () => {
         onBtnClick={() => navigate(PATH.addEmployees)}
         colorMapping={colorMapping}
         showFilter={false}
-        checkboxSelection={true}
+        checkboxSelection={false}
         showEyeBtn={false}
         showDownloadBtn={false}
         isSearchable={true}

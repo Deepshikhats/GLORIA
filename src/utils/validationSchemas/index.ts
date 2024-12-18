@@ -23,7 +23,7 @@ const commmonStudentSchema = {
       return typeof value == 'string' && isValidPhoneNumber(value);
     })
     .required('Required'),
-  place: Yup.string().max(250, 'Character limit exceeded'),
+  address: Yup.string().max(250, 'Character limit exceeded'),
   course: Yup.string().max(100),
 };
 export const AddStudentSchema = Yup.object(commmonStudentSchema);
@@ -136,4 +136,49 @@ export const PaymentDetailsSchema = Yup.object({
     .max(255, 'Remarks must be at most 255 characters')
     .nullable()
     .notRequired(),
+});
+export const AddAdmittedStudentSchema = Yup.object({
+  ...commmonStudentSchema,
+  first_year: Yup.string().nullable(),
+  second_year: Yup.string().nullable(),
+  third_year: Yup.string().nullable(),
+  fourth_year: Yup.string().nullable(),
+  fifth_year: Yup.string().nullable(),
+  SSLC: Yup.mixed().nullable(),
+  plus_two: Yup.mixed().nullable(),
+  aadhar: Yup.mixed().nullable(),
+  other_documents: Yup.mixed().nullable(),
+  father_name: Yup.string(),
+  father_contact_no: Yup.string().when('f_code', (f_code, schema) => {
+    return schema.test('is-valid-phone', 'Enter a valid number', (value) => {
+      if (!value) return true;
+
+      // Check if value contains only the country code
+      if (value.startsWith(f_code[0]) && value.length === f_code[0].length) {
+        return true;
+      }
+      return typeof value === 'string' && isValidPhoneNumber(value);
+    });
+  }),
+  mother_name: Yup.string(),
+  mother_contact_no: Yup.string().when('m_code', (m_code, schema) => {
+    return schema.test('is-valid-phone', 'Enter a valid number', (value) => {
+      if (!value) return true;
+
+      // Check if value contains only the country code
+      if (value.startsWith(m_code[0]) && value.length == m_code[0].length) {
+        return true;
+      }
+      return typeof value === 'string' && isValidPhoneNumber(value);
+    });
+  }),
+  gender: Yup.string().oneOf(['Male', 'Female', 'Other'], 'Invalid gender'),
+  blood_group: Yup.string(),
+  course: Yup.string().required('Course is required'),
+  college: Yup.string().required('College is required'),
+  course_status: Yup.string(),
+  uniform_fee: Yup.string(),
+  extra_fee: Yup.string(),
+  KEA_id: Yup.string(),
+  password: Yup.string(),
 });

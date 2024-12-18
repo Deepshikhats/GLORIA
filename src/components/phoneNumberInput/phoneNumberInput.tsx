@@ -1,9 +1,5 @@
 import React, { InputHTMLAttributes, useEffect } from 'react';
-import {
-  getCountries,
-  getCountryCallingCode,
-  parsePhoneNumber,
-} from 'react-phone-number-input';
+import { getCountries, getCountryCallingCode } from 'react-phone-number-input';
 import en from 'react-phone-number-input/locale/en';
 import Dropdown from '../dropdown';
 import Input from '../input';
@@ -31,7 +27,7 @@ interface PhoneNumberInputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   value: string;
   isInvalid: boolean | undefined;
-  handleChange: (value: string) => void;
+  handleChange: (value: string, code: string) => void;
 }
 const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   label,
@@ -47,13 +43,13 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   const [country, setCountry] = React.useState<string>('+91');
 
   useEffect(() => {
-    handleChange(country + value);
+    handleChange(country, country);
   }, [country]);
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let inputValue = event.target.value;
-    if (/^-?\d*\.?\d*$/.test(inputValue)) {
-      handleChange && handleChange(`${country}${inputValue}`);
+    if (/^\d*$/.test(inputValue)) {
+      handleChange && handleChange(`${country}${inputValue}`, country);
     }
   };
 
@@ -64,7 +60,9 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
       }`}
     >
       {label && (
-        <label className={`text-small ${rest.isInvalid ? 'text-danger' : ''}`}>
+        <label
+          className={`text-small capitalize ${rest.isInvalid ? 'text-danger' : ''}`}
+        >
           {label}
         </label>
       )}
@@ -85,7 +83,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
         {/* @ts-ignore */}
         <Input
           disabled={disabled}
-          value={value ? parsePhoneNumber(value)?.nationalNumber : ''}
+          value={value.substring(country.length)}
           onChange={onChange}
           containerClass="flex-1"
           {...rest}

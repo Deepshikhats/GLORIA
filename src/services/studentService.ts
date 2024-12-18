@@ -190,3 +190,21 @@ export const EditPayments = async ({
     return Promise.reject(error);
   }
 };
+
+export const AddAdmittedStudents = async (payload: FormData) => {
+  try {
+    const response = await privateAPI.post(
+      `employee/agent/create-admitted-student/`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return Promise.reject(error);
+  }
+};

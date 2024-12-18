@@ -64,6 +64,11 @@ export const studentColums: TColumn[] = [
     d_name: 'course',
   },
   {
+    title: { label: 'COURSE STATUS' },
+    type: 'status',
+    d_name: 'course_status',
+  },
+  {
     title: {
       label: 'STAFF ASSIGNED',
     },
@@ -240,6 +245,9 @@ export const colorMapping: { [status: string]: string } = {
   'Follow Up': 'warning',
   APPROVED: 'success',
   NOT_APPROVED: 'danger',
+  ONGOING: 'warning',
+  CANCELLED: 'danger',
+  COMPLETED: 'success',
 };
 export const colorMappingAttendence: { [status: string]: string } = {
   PRESENT: 'success',

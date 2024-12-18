@@ -121,6 +121,7 @@ interface IAddCollege {
 
 interface ICollege extends IAddCollege {
   id: string;
+  brochure: string;
 }
 
 interface IDashboardEmployee {
@@ -168,4 +169,36 @@ interface IPayment {
   payment_screenshot: string;
   remarks: string;
   isNew?: boolean;
+}
+
+interface IAdmittedStudent {
+  name: string;
+  email: string;
+  phone_number: string;
+  address: string;
+  father_name: string;
+  father_contact_no: string;
+  mother_name: string;
+  mother_contact_no: string;
+  gender: string;
+  blood_group: string;
+  course: string;
+  college: string;
+  course_status: string;
+  passport_photo: string;
+  SSLC: string;
+  plus_two: string;
+  aadhar: string;
+  other_documents: string;
+  uniform_fee: string;
+  extra_fee: string;
+  first_year: string;
+  second_year: string;
+  third_year: string;
+  fourth_year: string;
+  fifth_year: string;
+  KEA_id: string;
+  password: string;
+  m_code: string;
+  f_code: string;
 }
