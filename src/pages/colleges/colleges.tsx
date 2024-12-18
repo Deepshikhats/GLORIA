@@ -60,6 +60,12 @@ const Colleges: React.FC = () => {
     };
   }, [collegeName]);
 
+  useEffect(() => {
+    return () => {
+      setSelectedRowIds({});
+    };
+  }, []);
+
   const handleCollegeDelete = () => {
     DeleteCollege(Object.keys(selectedRowIds).flatMap((v) => selectedRowIds[v]))
       .then((data) => {
@@ -114,13 +120,13 @@ const Colleges: React.FC = () => {
     });
   };
 
-  const handleRowClick = () => {
+  const handleRowClick = (data: ICollege) => {
     if (navigator.share) {
       navigator
         .share({
           title: 'Your WebApp Title',
           text: 'Check out this link!',
-          url: window.location.href, // or a specific URL if needed
+          url: data.brochure,
         })
         .then(() => console.log('Successfully shared'))
         .catch((error) => console.error('Error sharing:', error));

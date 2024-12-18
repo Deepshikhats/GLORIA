@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import Modals from '../../modals';
+import useStore from '@/store/store';
 const Employees = () => {
   const navigate = useNavigate();
   const [page, setPage] = React.useState(1);
@@ -14,6 +15,8 @@ const Employees = () => {
   const [selectedRow, setSelectedRow] = useState<IEmployee>();
   const [isDLoading, setIsDLoading] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>('');
+  /********************************STORE************************************** */
+  const { setSelectedRowIds } = useStore((state) => state);
 
   const { data, isLoading, mutate } = useSWR(
     `${swrKeys.EMPLOYEES}-${page}`,
@@ -38,6 +41,12 @@ const Employees = () => {
       debouncedMutate.cancel();
     };
   }, [searchValue]);
+
+  useEffect(() => {
+    return () => {
+      setSelectedRowIds({});
+    };
+  }, []);
 
   const handleEmployeeDelete = () => {
     setIsDLoading(true);
@@ -87,7 +96,7 @@ const Employees = () => {
         isSearchable={true}
         searchValue={searchValue}
         setSearchValue={setSearchValue}
-        checkboxSelection={true}
+        checkboxSelection={false}
         showEyeBtn={false}
         showDownloadBtn={false}
         handleRowAction={handleRowActions}

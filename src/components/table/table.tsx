@@ -173,7 +173,7 @@ const Table = <
                       )}
                     />
                     <Menu
-                      containerClass="!w-fit"
+                      containerClass="!w-fit relative"
                       showLabel={false}
                       isKebabMenu={true}
                       menuClass="!min-w-fit"
@@ -576,7 +576,7 @@ const Table = <
                               )}
 
                               {showEditBtn && (
-                                <Tooltip content="Edit User">
+                                <Tooltip content="Edit">
                                   <button
                                     className={`text-lg text-default-400 active:opacity-50 ${isRowActionDisabled(rowEntry, 'edit') ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                                     onClick={(e) => {
@@ -611,13 +611,12 @@ const Table = <
                                     )}
                                   >
                                     {GetIcons('download')}{' '}
-                                    {/* Replace with your download icon */}
                                   </button>
                                 </Tooltip>
                               )}
 
                               {showDeleteBtn && (
-                                <Tooltip color="danger" content="Delete user">
+                                <Tooltip color="danger" content="Delete">
                                   <button
                                     className={`text-lg text-danger cursor-pointer active:opacity-50  ${isRowActionDisabled(rowEntry, 'delete') ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                                     onClick={(e) => {

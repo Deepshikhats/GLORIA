@@ -21,6 +21,7 @@ const AddCollege = lazy(() => import('@/pages/addCollege'));
 const Notification = lazy(() => import('@/pages/notifications'));
 const Settings = lazy(() => import('@/pages/settings'));
 const AttendenceList = lazy(() => import('@/pages/attendenceList'));
+const AddAdmittedStudents = lazy(() => import('@/pages/addAdmittedStudents'));
 
 const Router = createBrowserRouter([
   {
@@ -100,6 +101,10 @@ const Router = createBrowserRouter([
           {
             path: PATH.attendence,
             element: <AttendenceList />,
+          },
+          {
+            path: PATH.addAdmittedStudents,
+            element: <AddAdmittedStudents />,
           },
         ],
       },

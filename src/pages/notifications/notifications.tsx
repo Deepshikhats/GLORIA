@@ -154,29 +154,33 @@ const Notifications: React.FC = () => {
                 key={index}
                 className="bg-primary-50 rounded-lg p-3 flex gap-2 items-center"
               >
-                <CheckBox
-                  id={`child_${index}`}
-                  onChange={(e) => handleRowSelection(e, not?.id)}
-                  isSelected={not.id ? ids.includes(not?.id) : false}
-                />
+                {is_admin && (
+                  <CheckBox
+                    id={`child_${index}`}
+                    onChange={(e) => handleRowSelection(e, not?.id)}
+                    isSelected={not.id ? ids.includes(not?.id) : false}
+                  />
+                )}
                 <div className="flex flex-col">
                   {not.notification_message}
-                  <span className="text-gray-400 ml-auto">
+                  <span className="text-gray-400 text-small">
                     {not.updated_at.toLocaleString()}
                   </span>
                 </div>
 
-                <Menu
-                  showLabel={false}
-                  menuClass="!w-fit"
-                  options={[
-                    { label: 'Edit', value: 'edit' },
-                    { label: 'Delete', value: 'delete' },
-                  ]}
-                  isKebabMenu={true}
-                  containerClass="!w-fit ml-auto"
-                  onSelectItem={(option) => handleActions(option, not)}
-                />
+                {is_admin && (
+                  <Menu
+                    showLabel={false}
+                    menuClass="!w-fit"
+                    options={[
+                      { label: 'Edit', value: 'edit' },
+                      { label: 'Delete', value: 'delete' },
+                    ]}
+                    isKebabMenu={true}
+                    containerClass="!w-fit ml-auto relative"
+                    onSelectItem={(option) => handleActions(option, not)}
+                  />
+                )}
               </div>
             ))}
           </InfiniteScroll>

@@ -35,7 +35,7 @@ const AddEmployee: React.FC = (): React.JSX.Element => {
     is_admin: false,
     is_employee: true,
     is_agent: false,
-    work_location: '',
+    work_location: 'work_from_office',
   });
 
   useEffect(() => {
@@ -194,6 +194,7 @@ const AddEmployee: React.FC = (): React.JSX.Element => {
               onBlur={handleBlur}
             />
             <Menu
+              containerClass="relative"
               label={'Work Location'}
               options={workModeOptions}
               onSelectItem={({ value }) =>

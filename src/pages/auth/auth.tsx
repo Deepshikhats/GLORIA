@@ -63,6 +63,7 @@ const Auth: React.FC = () => {
                   isInvalid={touched.username && !!errors.username}
                   errorText={errors.username}
                 />
+
                 <Input
                   label="Password"
                   name="password"
@@ -71,6 +72,7 @@ const Auth: React.FC = () => {
                   variant="bordered"
                   labelPlacement="outside"
                   className="outline-none"
+                  showEye={true}
                   value={values.password}
                   onChange={handleChange}
                   onBlur={handleBlur}

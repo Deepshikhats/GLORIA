@@ -21,10 +21,10 @@ import Modals from '../../modals';
 const Students = () => {
   const navigate = useNavigate();
   const {
-    userDetails: { id, is_admin },
+    userDetails: { id, is_admin, is_employee },
   } = useStore((state) => state);
   /********************************STORE************************************** */
-  const { selectedRowIds } = useStore((state) => state);
+  const { selectedRowIds, setSelectedRowIds } = useStore((state) => state);
 
   /******************************** REACT-HOOKS ************************************** */
 
@@ -60,6 +60,9 @@ const Students = () => {
         results: response?.results?.map((item: any) => ({
           ...item,
           ...(item?.approval_status ? { status: item.approval_status } : {}),
+          ...(item?.course_status
+            ? { course_status: item.course_status }
+            : { course_status: '' }),
         })),
       };
     },
@@ -78,6 +81,12 @@ const Students = () => {
       debouncedMutate.cancel();
     };
   }, [searchValue]);
+
+  useEffect(() => {
+    return () => {
+      setSelectedRowIds({});
+    };
+  }, []);
 
   const handleHeaderActions = (action: TOption) => {
     if (action.value === 'delete') {
@@ -99,7 +108,11 @@ const Students = () => {
     //@ts-ignore
     deleteStudents({ student_ids: [selectedRow?.id] })
       .then((value) => notify(value, { type: 'success' }))
-      .finally(() => setIsDltLoading(false));
+      .finally(() => {
+        setIsDltLoading(false);
+        setShowDeleteModal(false);
+        mutate();
+      });
   };
 
   /********************************CUSTOM METHODS************************************** */
@@ -198,8 +211,10 @@ const Students = () => {
             //@ts-ignore
             setSelectedFilter([]);
           }}
-          onBtnClick={() => navigate(PATH.addStudents)}
-          isBtnDisabled={!is_admin}
+          onBtnClick={() =>
+            navigate(is_admin ? PATH.addStudents : PATH.addAdmittedStudents)
+          }
+          isBtnDisabled={is_employee}
           colorMapping={colorMapping}
           showFilter={true}
           handleRowAction={handleStudentActions}
