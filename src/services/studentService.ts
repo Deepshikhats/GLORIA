@@ -208,3 +208,13 @@ export const AddAdmittedStudents = async (payload: FormData) => {
     return Promise.reject(error);
   }
 };
+
+export const ListAccounts = async () => {
+  try {
+    const response = await privateAPI.get(`admin/accounts/`);
+    return response.data;
+  } catch (error) {
+    handleError(error);
+    return Promise.reject(error);
+  }
+};

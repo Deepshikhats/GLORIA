@@ -120,9 +120,13 @@ const Students = () => {
   const handleStudentActions = (action: string, rowData: IStudent) => {
     setSelectedRow(rowData);
     if (action === 'edit') {
-      rowData.is_admitted
-        ? notify('Student is already admitted', { type: 'warning' })
-        : setShowAdmitStudentModal(true);
+      is_admin
+        ? notify(`You don't have permission to admit students`, {
+            type: 'warning',
+          })
+        : rowData.is_admitted
+          ? notify('Student is already admitted', { type: 'warning' })
+          : setShowAdmitStudentModal(true);
     } else if (action === 'delete') {
       setShowDeleteModal(true);
     } else if (action === 'download') {

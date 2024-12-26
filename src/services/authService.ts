@@ -1,5 +1,6 @@
 import { getLocalStorage, setLocalStorage } from '@/utils/helpers/helpers';
 import { api, privateAPI } from './config/api.config';
+import { handleError } from '@/utils/helpers/errorHandler';
 
 export const Login = async (payload: ILogin) => {
   try {
@@ -29,5 +30,13 @@ export const GetUserDetails = async () => {
     return response.data;
   } catch (error) {
     return false;
+  }
+};
+export const ForgetPassword = async (payload: { email: string }) => {
+  try {
+    const response = await api.post(`auth/forget-password/`, payload);
+    return response.data;
+  } catch (error) {
+    handleError(error);
   }
 };
