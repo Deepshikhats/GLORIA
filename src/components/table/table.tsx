@@ -157,6 +157,17 @@ const Table = <
           </div>
         ) : (
           <>
+            <div className="px-4 py-2">
+              <Checkbox
+                id="selectAll"
+                onChange={handleSelectAll}
+                isSelected={rows?.every(({ id }) =>
+                  selectedRowIds?.[currentPage]?.includes(id)
+                )}
+              >
+                Select All
+              </Checkbox>
+            </div>
             <div className="p-4 flex flex-col gap-2 md:hidden">
               {rows?.map((rowEntry, ind) => (
                 <div
@@ -166,11 +177,9 @@ const Table = <
                 >
                   <div className="flex justify-between">
                     <Checkbox
-                      id="selectAll"
-                      onChange={handleSelectAll}
-                      isSelected={rows?.every(({ id }) =>
-                        selectedRowIds?.[currentPage]?.includes(id)
-                      )}
+                      id={`child_${ind}`}
+                      onChange={(e) => handleRowSelection(e, rowEntry)}
+                      isSelected={validateChecked(rowEntry)}
                     />
                     <Menu
                       containerClass="!w-fit relative"

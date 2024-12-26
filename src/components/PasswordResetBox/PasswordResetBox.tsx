@@ -1,4 +1,4 @@
-import { ChangePassword, ResetPassword } from '@/services/setttingsService';
+import { ChangePassword } from '@/services/setttingsService';
 import { notify } from '@/utils/helpers/helpers';
 import {
   EmailValidationSchema,
@@ -9,7 +9,9 @@ import React, { Fragment, useState } from 'react';
 import Button from '../button';
 import Input from '../input';
 
-const PasswordResetBox: React.FC = () => {
+const PasswordResetBox: React.FC<{
+  api: (values: { email: '' }) => Promise<any>;
+}> = ({ api }) => {
   const [formAction, setFormAction] = useState<number>(1);
 
   const handleResetPassword = async (
@@ -29,7 +31,7 @@ const PasswordResetBox: React.FC = () => {
     actions: FormikHelpers<{ email: '' }>
   ) => {
     try {
-      const resp = await ResetPassword(values);
+      const resp = await api(values);
       notify(resp.message, { type: 'success' });
       setFormAction(2);
     } finally {

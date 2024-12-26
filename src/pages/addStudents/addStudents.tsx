@@ -130,7 +130,7 @@ const AddStudents: React.FC = (): React.JSX.Element => {
           handleSubmit,
         }) => (
           <form
-            className="grid grid-cols-1 gap-4 gap-y-8 p-4 lg:grid-cols-2 overflow-auto"
+            className="grid grid-cols-1 gap-4 gap-y-8 p-4 lg:grid-cols-2 overflow-auto flex-1"
             onSubmit={handleSubmit}
           >
             <Input
@@ -180,6 +180,8 @@ const AddStudents: React.FC = (): React.JSX.Element => {
             />
             <AsyncSelect
               label="College Name*"
+              showError={true}
+              errorText={errors.college}
               loadOptions={loadOptions}
               value={{ label: values.college, value: values.college }}
               onChange={(e) => setFieldValue('college', e?.label)}

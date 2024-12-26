@@ -1,4 +1,5 @@
 import PasswordResetBox from '@/components/PasswordResetBox';
+import { ForgetPassword } from '@/services/authService';
 import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
 
 export interface AttendenceModalProps {
@@ -19,7 +20,7 @@ const ResetPasswordModal: React.FC<AttendenceModalProps> = ({
               Reset Password
             </ModalHeader>
             <ModalBody>
-              <PasswordResetBox />
+              <PasswordResetBox api={ForgetPassword} />
             </ModalBody>
           </>
         )}

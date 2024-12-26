@@ -1,5 +1,6 @@
 import LocationBox from '@/components/locationInfo';
 import PasswordResetBox from '@/components/PasswordResetBox';
+import { ResetPassword } from '@/services/setttingsService';
 import useStore from '@/store/store';
 import { Accordion, AccordionItem } from '@nextui-org/react';
 import React from 'react';
@@ -35,7 +36,7 @@ const Settings: React.FC = () => {
           aria-label={'security'}
           title={<h4 className="text-lg font-bold">Security</h4>}
         >
-          <PasswordResetBox />
+          <PasswordResetBox api={ResetPassword} />
         </AccordionItem>
         {userDetails?.is_admin && (
           <AccordionItem

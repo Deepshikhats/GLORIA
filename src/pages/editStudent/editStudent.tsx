@@ -12,6 +12,7 @@ import {
   CreatePayments,
   DeletePayments,
   EditPayments,
+  ListAccounts,
   ListPayments,
   updateStudent,
   ViewStudentDetails,
@@ -287,6 +288,21 @@ const EditStudent: React.FC = (): React.JSX.Element => {
       return { options: [], hasMore: false };
     }
   };
+  const loadAccountOptions = async () => {
+    try {
+      const response = await ListAccounts();
+      return {
+        options: response?.map((clg: string) => ({
+          label: clg,
+          value: clg,
+        })),
+        hasMore: false,
+      };
+    } catch (error) {
+      console.error('Failed to load options:', error);
+      return { options: [], hasMore: false };
+    }
+  };
   /*******************************CUSTOM METHODS********************************************* */
 
   const handleFileUpload = (
@@ -439,7 +455,11 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                 </h5>
                 <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
                   {Object.keys(values)
-                    .filter((_fileld) => paymentFields.includes(_fileld))
+                    .filter(
+                      (_fileld) =>
+                        paymentFields.includes(_fileld) &&
+                        !adminEditableFields.includes(_fileld)
+                    )
                     .map((field, index) => {
                       if (['mode_of_payment'].includes(field)) {
                         return (
@@ -505,32 +525,26 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                       );
                     })}
                 </section>
-
-                <h5 className="font-bold text-primary border-b py-1">Others</h5>
+                <h5 className="font-bold text-primary border-b py-1">
+                  Admin Section
+                </h5>
                 <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
                   {Object.keys(values)
                     .filter(
                       (_fileld) =>
-                        ![
-                          ...basicInfo,
-                          ...docFields,
-                          ...paymentFields,
-                          'id',
-                          'staff_assigned',
-                          'admitted_by',
-                          'student_response',
-                          'payments',
-                          ...(values?.course !== 'Bsc Nursing'
-                            ? ['KEA_id', 'password']
-                            : ''),
-                        ].includes(_fileld)
+                        adminEditableFields.includes(_fileld) &&
+                        ![...basicInfo, 'staff_assigned'].includes(_fileld)
                     )
                     .map((field, index) => {
                       if (['admin_messages', 'admin_notes'].includes(field)) {
                         return (
                           <TextArea
                             key={index}
-                            label={field.replace('_', ' ')}
+                            label={
+                              field === 'admin_messages'
+                                ? 'Admin messages for employees'
+                                : field.replace('_', ' ')
+                            }
                             name={field}
                             placeholder={field}
                             containerClass={
@@ -539,7 +553,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                                 : ''
                             }
                             labelPlacement="outside"
-                            maxRows={3}
+                            maxRows={8}
                             disabled={isFieldDisabled(field)}
                             //@ts-ignore
                             value={values?.[field]}
@@ -548,16 +562,11 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                           />
                         );
                       } else if (
-                        [
-                          'status',
-                          'approval_status',
-                          'course_status',
-                          'gender',
-                          'blood_group',
-                        ].includes(field)
+                        ['approval_status', 'course_status'].includes(field)
                       ) {
                         return (
                           <Menu
+                            containerClass="relative"
                             //@ts-ignore
                             label={field.replaceAll('_', ' ')}
                             //@ts-ignore
@@ -599,6 +608,71 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                                 e?.label
                               );
                             }}
+                          />
+                        );
+                      }
+                      return (
+                        <Input
+                          key={index}
+                          //@ts-ignore
+                          label={field.replaceAll('_', ' ')}
+                          name={field}
+                          placeholder={field}
+                          labelPlacement="outside"
+                          //@ts-ignore
+                          isInvalid={touched?.[field] && !!errors?.[field]}
+                          //@ts-ignore
+
+                          value={values?.[field]}
+                          disabled={isFieldDisabled(field)}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                      );
+                    })}
+                </section>
+
+                <h5 className="font-bold text-primary border-b py-1">Others</h5>
+                <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
+                  {Object.keys(values)
+                    .filter(
+                      (_fileld) =>
+                        ![
+                          ...docFields,
+                          ...paymentFields,
+                          ...adminEditableFields,
+                          'id',
+                          'staff_assigned',
+                          'admitted_by',
+                          'student_response',
+                          'payments',
+                          ...(values?.course !== 'Bsc Nursing'
+                            ? ['KEA_id', 'password']
+                            : ''),
+                        ].includes(_fileld)
+                    )
+                    .map((field, index) => {
+                      if (['status', 'gender', 'blood_group'].includes(field)) {
+                        return (
+                          <Menu
+                            //@ts-ignore
+                            label={field.replaceAll('_', ' ')}
+                            //@ts-ignore
+                            options={mapDropDownOptions?.[field] || []}
+                            onSelectItem={({ value }) =>
+                              setFieldValue(field, value)
+                            }
+                            menuClass="w-full"
+                            disabled={isFieldDisabled(field)}
+                            isSelectable={true}
+                            selectedItem={
+                              //@ts-ignore
+                              mapDropDownOptions?.[field]?.find(
+                                (options: { value: any }) =>
+                                  //@ts-ignore
+                                  options.value === values?.[field]
+                              )?.label
+                            }
                           />
                         );
                       }
@@ -814,22 +888,24 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                             )}
                           </div>
                         </div>
-
-                        <Input
+                        <AsyncSelect
                           label={'Account Details'}
-                          name={`account_details`}
-                          placeholder={`Enter here`}
-                          labelPlacement="outside"
+                          loadOptions={loadAccountOptions}
+                          value={{
+                            label: values?.account_details,
+                            value: values?.account_details,
+                          }}
+                          onChange={(e) =>
+                            setFieldValue('account_details', e?.label)
+                          }
                           isInvalid={
                             touched?.account_details &&
-                            //@ts-ignore
                             !!errors?.account_details
                           }
-                          value={values.account_details}
-                          disabled={data?.approval_status === 'approved'}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
+                          showError={true}
+                          errorText={errors?.account_details}
                         />
+
                         <Input
                           label={'Amount from students'}
                           name={`amount_received_from_student`}
