@@ -46,7 +46,7 @@ interface IStudent {
   name: string;
   email: null | string;
   phone_number: string;
-  place: string;
+  address: string;
   course: string;
   staff_assigned_full_name: string;
   status: string;

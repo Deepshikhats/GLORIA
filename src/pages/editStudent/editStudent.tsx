@@ -19,7 +19,7 @@ import {
 } from '@/services/studentService';
 import useStore from '@/store/store';
 import {
-  adminEditableFields,
+  adminFields,
   autoCalculatedFields,
   basicInfo,
   docFields,
@@ -73,9 +73,9 @@ const EditStudent: React.FC = (): React.JSX.Element => {
         return true;
       }
 
-      return is_admin
-        ? !adminEditableFields?.includes(field)
-        : employeeRestrictedFields?.includes(field);
+      return is_employee || is_agent
+        ? employeeRestrictedFields?.includes(field)
+        : ['admitted_by_full_name'].includes(field);
     },
     []
   );
@@ -96,23 +96,27 @@ const EditStudent: React.FC = (): React.JSX.Element => {
   ) => {
     const formData = new FormData();
     const authorizedFields = is_admin
-      ? Object.keys(values).filter((val) => adminEditableFields.includes(val))
+      ? Object.keys(values).filter(
+          (val) =>
+            ![
+              ...autoCalculatedFields,
+              'payments',
+              'id',
+              'staff_assigned',
+              'admitted_by_full_name',
+              'commision',
+              'password',
+              'date_of_admission',
+            ].includes(val)
+        )
       : Object.keys(values).filter(
           (val) =>
-            !employeeRestrictedFields.includes(val) &&
             ![
-              'payments',
-              'service_charge_withdrawn',
-              'balance_service_charge',
+              ...employeeRestrictedFields,
               'date_of_admission',
-              'total_fees',
-            ].includes(val) // Exclude invalid fields for agent
+              'payments',
+            ].includes(val)
         );
-
-    // Make sure to include uniform_fee and extra_fee for agents
-    if (is_agent) {
-      authorizedFields.push('uniform_fee', 'extra_fee');
-    }
 
     authorizedFields.forEach((field) => {
       if (field === 'student_response') {
@@ -312,7 +316,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
   ) => {
     const max_limit =
       e?.target?.files?.[0]?.type === 'application/pdf'
-        ? 1 * 1024 * 1024
+        ? 4 * 1024 * 1024
         : 2 * 1024 * 1024;
 
     //@ts-ignore
@@ -397,13 +401,15 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                   {Object.keys(values)
                     .filter((field) => basicInfo.includes(field))
                     .map((field, index) =>
-                      field === 'place' ? (
+                      field === 'address' ? (
                         <TextArea
                           key={index}
                           label={field.replace('_', ' ')}
                           name={field}
                           placeholder={field}
                           labelPlacement="outside"
+                          //@ts-ignore
+                          isInvalid={touched?.[field] && !!errors?.[field]}
                           maxRows={3}
                           disabled={isFieldDisabled(field)}
                           value={values?.[field]}
@@ -458,7 +464,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                     .filter(
                       (_fileld) =>
                         paymentFields.includes(_fileld) &&
-                        !adminEditableFields.includes(_fileld)
+                        !adminFields.includes(_fileld)
                     )
                     .map((field, index) => {
                       if (['mode_of_payment'].includes(field)) {
@@ -530,12 +536,10 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                 </h5>
                 <section className="grid grid-cols-1 gap-4 gap-y-8  md:grid-cols-2">
                   {Object.keys(values)
-                    .filter(
-                      (_fileld) =>
-                        adminEditableFields.includes(_fileld) &&
-                        ![...basicInfo, 'staff_assigned'].includes(_fileld)
-                    )
+                    .filter((_fileld) => adminFields.includes(_fileld))
                     .map((field, index) => {
+                      console.log(field, 'field');
+
                       if (['admin_messages', 'admin_notes'].includes(field)) {
                         return (
                           <TextArea
@@ -618,11 +622,14 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                           label={field.replaceAll('_', ' ')}
                           name={field}
                           placeholder={field}
+                          //@ts-ignore
+                          containerClass={
+                            !is_admin && isFieldViewable(field) && 'hidden'
+                          }
                           labelPlacement="outside"
                           //@ts-ignore
                           isInvalid={touched?.[field] && !!errors?.[field]}
                           //@ts-ignore
-
                           value={values?.[field]}
                           disabled={isFieldDisabled(field)}
                           onChange={handleChange}
@@ -638,9 +645,10 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                     .filter(
                       (_fileld) =>
                         ![
+                          ...basicInfo,
                           ...docFields,
                           ...paymentFields,
-                          ...adminEditableFields,
+                          ...adminFields,
                           'id',
                           'staff_assigned',
                           'admitted_by',
@@ -652,7 +660,14 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                         ].includes(_fileld)
                     )
                     .map((field, index) => {
-                      if (['status', 'gender', 'blood_group'].includes(field)) {
+                      if (
+                        [
+                          'status',
+                          'gender',
+                          'blood_group',
+                          'course_status',
+                        ].includes(field)
+                      ) {
                         return (
                           <Menu
                             //@ts-ignore
@@ -663,6 +678,7 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                               setFieldValue(field, value)
                             }
                             menuClass="w-full"
+                            containerClass="relative"
                             disabled={isFieldDisabled(field)}
                             isSelectable={true}
                             selectedItem={
@@ -673,6 +689,28 @@ const EditStudent: React.FC = (): React.JSX.Element => {
                                   options.value === values?.[field]
                               )?.label
                             }
+                          />
+                        );
+                      } else if (field === 'date_of_admission') {
+                        return (
+                          <DatePicker
+                            dateFormat="dd/MM/yyyy"
+                            label="Date of Admission"
+                            selected={
+                              //@ts-ignore
+                              values?.[field]
+                                ? //@ts-ignore
+                                  new Date(values?.[field])
+                                : new Date()
+                            }
+                            onChange={(date) =>
+                              setFieldValue(
+                                field,
+                                moment(date).format('YYYY/MM/DD')
+                              )
+                            }
+                            maxDate={new Date()}
+                            disabled={data?.approval_status === 'approved'}
                           />
                         );
                       }

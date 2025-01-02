@@ -15,6 +15,10 @@ const Employees = () => {
   const [selectedRow, setSelectedRow] = useState<IEmployee>();
   const [isDLoading, setIsDLoading] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>('');
+
+  const [selectedFilter, setSelectedFilter] = useState<{
+    [key: string]: string[];
+  }>({ Roles: [''] });
   /********************************STORE************************************** */
   const { setSelectedRowIds } = useStore((state) => state);
 
@@ -24,7 +28,7 @@ const Employees = () => {
       ListEmployees({
         limit: 10,
         page,
-        type: 'Employees',
+        type: selectedFilter.Roles[0],
         search: searchValue,
       }),
     {
@@ -34,6 +38,7 @@ const Employees = () => {
       revalidateOnReconnect: true,
     }
   );
+
   useEffect(() => {
     const debouncedMutate = debounce(() => mutate());
     debouncedMutate();
@@ -73,17 +78,28 @@ const Employees = () => {
     }
   };
 
-  // Filter out agents from the data before passing it to the Table component
-  const filteredRows = data?.results?.filter(
-    (employee: IEmployee) => !employee.is_agent
-  );
+  const handleFilterSelection = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string;
+  }) => {
+    setSelectedFilter((cv) => {
+      return {
+        ...cv,
+        [label]: [value],
+      };
+    });
+  };
+  console.log(selectedFilter);
 
   return (
     <section className="h-full overflow-hidden p-2 slideIn">
       {/* @ts-ignore */}
       <Table
         btnLabel="Add Employee"
-        rows={filteredRows}
+        rows={data?.results}
         colums={employeeColums}
         currentPage={page}
         showingLimit={10}
@@ -92,14 +108,32 @@ const Employees = () => {
         setCurrentPage={setPage}
         onBtnClick={() => navigate(PATH.addEmployees)}
         colorMapping={colorMapping}
-        showFilter={false}
         isSearchable={true}
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         checkboxSelection={false}
         showEyeBtn={false}
+        showFilter={true}
+        accOptions={{
+          //@ts-ignore
+          label: 'Roles',
+          iterables: [
+            { label: 'All', value: '' },
+            { label: 'Agents', value: 'Agents' },
+            { label: 'Admins', value: 'Admins' },
+            { label: 'Employees', value: 'Employees' },
+          ],
+        }}
         showDownloadBtn={false}
         handleRowAction={handleRowActions}
+        //@ts-ignore
+        selectedItems={selectedFilter}
+        handleApplyButton={() => mutate()}
+        //@ts-ignore
+        setSelectedItems={handleFilterSelection}
+        reset={() => {
+          setSelectedFilter({ Roles: [] });
+        }}
       />
       <Modals.ConfirmationModal
         isOpen={showDeleteModal}

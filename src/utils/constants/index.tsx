@@ -268,24 +268,53 @@ export const basicInfo = [
   'name',
   'email',
   'phone_number',
-  'place',
+  'address',
   'course',
   'college',
 ];
 
-export const adminEditableFields = [
-  ...basicInfo,
-  'approval_status',
-  'admin_notes',
-  'admin_messages',
+export const adminEditableFields = [...basicInfo, 'course_status'];
+
+export const adminFields = [
+  'employee_incentive',
+  'balance_service_charge',
+  'service_charge_withdrawn',
   'total_service_charge',
   'admin_notes',
-  'employee_incentive',
-  'course_status',
-  'staff_assigned',
-  'employee_incentive',
-  'course_status',
+  'admin_messages',
+  'approval_status',
   'staff_assigned_full_name',
+];
+export const autoCalculatedFields: string[] = [
+  'total_fees',
+  'balance_service_charge',
+  'service_charge_withdrawn',
+];
+export const employeeRestrictedFields: string[] = [
+  ...autoCalculatedFields,
+  ...adminFields,
+  'id',
+  'staff_assigned',
+  'admitted_by_full_name',
+  'commision',
+];
+
+export const docFields: string[] = [
+  'passport_photo',
+  'SSLC',
+  'plus_two',
+  'aadhar',
+  'other_documents',
+];
+export const paymentFields: string[] = [
+  'total_fees',
+  'extra_fee',
+  'uniform_fee',
+  'first_year',
+  'second_year',
+  'third_year',
+  'fourth_year',
+  'fifth_year',
 ];
 
 export const tableHeaderOptions = [
@@ -298,45 +327,7 @@ export const tableHeaderOptions = [
     value: 'delete',
   },
 ];
-export const employeeRestrictedFields: string[] = [
-  'id',
-  'approval_status',
-  'admin_messages',
-  'admin_notes',
-  'total_service_charge',
-  'employee_incentive',
-  'staff_assigned',
-  'staff_assigned_full_name',
-  'admitted_by_full_name',
-  'commision',
-];
 
-export const autoCalculatedFields: string[] = [
-  'total_fees',
-  'balance_service_charge',
-];
-
-export const docFields: string[] = [
-  'passport_photo',
-  'SSLC',
-  'plus_two',
-  'aadhar',
-  'other_documents',
-];
-export const paymentFields: string[] = [
-  'total_fees',
-  'total_service_charge',
-  'extra_fee',
-  'employee_incentive',
-  'balance_service_charge',
-  'service_charge_withdrawn',
-  'uniform_fee',
-  'first_year',
-  'second_year',
-  'third_year',
-  'fourth_year',
-  'fifth_year',
-];
 export const collegeColums: TColumn[] = [
   {
     title: { label: 'COLLEGE' },

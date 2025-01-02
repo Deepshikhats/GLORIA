@@ -55,7 +55,7 @@ export const Header: React.FC<{
             {GetIcons('menu')}
           </button>
         )}
-        {!userDetails?.is_agent && (
+        {userDetails?.is_employee && (
           <Button
             label={'Attendence'}
             color={'warning'}

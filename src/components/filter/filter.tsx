@@ -34,11 +34,19 @@ const Filter: React.FC<FilterProps> = ({
         className="p-2 m-auto border-0 cursor-pointer bg-slate-300 rounded-lg"
         onClick={() => setOpenFilter((cv) => !cv)}
       >
-        {selectedItems?.length > 0 && isFilterActive && (
-          <span className="absolute text-xs top-[-5px] left-[-10px] text-white bg-red-600 rounded-full px-2 py-1">
-            {selectedItems.length}
-          </span>
-        )}
+        {Object.keys(selectedItems).some(
+          //@ts-ignore
+          (key) => selectedItems[key].length > 0
+        ) &&
+          isFilterActive && (
+            <span className="absolute text-xs top-[-5px] left-[-10px] text-white bg-red-600 rounded-full px-2 py-1">
+              {Object.keys(selectedItems).reduce(
+                //@ts-ignore
+                (acc, key) => acc + selectedItems[key].length,
+                0
+              )}
+            </span>
+          )}
         {GetIcons('filter')}
       </button>
       {openFilter && (
@@ -56,7 +64,7 @@ const Filter: React.FC<FilterProps> = ({
               color="danger"
               onClick={() => {
                 reset();
-                setIsFilterActive(false);
+                // setIsFilterActive(false);
               }}
             />
             <Button
