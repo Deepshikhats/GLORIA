@@ -157,17 +157,19 @@ const Table = <
           </div>
         ) : (
           <>
-            <div className="px-4 py-2">
-              <Checkbox
-                id="selectAll"
-                onChange={handleSelectAll}
-                isSelected={rows?.every(({ id }) =>
-                  selectedRowIds?.[currentPage]?.includes(id)
-                )}
-              >
-                Select All
-              </Checkbox>
-            </div>
+            {checkboxSelection && (
+              <div className="px-4 py-2 md:hidden">
+                <Checkbox
+                  id="selectAll"
+                  onChange={handleSelectAll}
+                  isSelected={rows?.every(({ id }) =>
+                    selectedRowIds?.[currentPage]?.includes(id)
+                  )}
+                >
+                  Select All
+                </Checkbox>
+              </div>
+            )}
             <div className="p-4 flex flex-col gap-2 md:hidden">
               {rows?.map((rowEntry, ind) => (
                 <div

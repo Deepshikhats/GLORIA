@@ -26,7 +26,10 @@ const Input: React.FC<InputComponentProps> = ({
       <InputComp
         className={`h-10 ${props.className}`}
         isInvalid={isInvalid}
-        classNames={{ label: 'capitalize' }}
+        classNames={{
+          label: 'capitalize',
+          input: props.disabled ? '!cursor-not-allowed' : 'cursor-pointer',
+        }}
         endContent={
           showEye ? (
             <button

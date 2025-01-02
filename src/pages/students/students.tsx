@@ -226,6 +226,7 @@ const Students = () => {
           showEyeBtn={false}
           showActions={showActions}
           searchValue={searchValue}
+          showBtn={!is_employee}
           setSearchValue={setSearchValue}
           handleHeaderAction={handleHeaderActions}
           isRowActionDisabled={isRowEditDisabled}

@@ -166,6 +166,7 @@ const Colleges: React.FC = () => {
           searchValue={collegeName}
           setSearchValue={setCollegeName}
           accOptions={filterOptions}
+          showBtn={is_admin}
           //@ts-ignore
           selectedItems={selectedFilter}
           //@ts-ignore

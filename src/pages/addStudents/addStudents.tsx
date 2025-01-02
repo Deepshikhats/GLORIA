@@ -4,7 +4,7 @@ import Button from '@/components/button';
 import Input from '@/components/input';
 import PhoneNumberInput from '@/components/phoneNumberInput';
 import TextArea from '@/components/textArea';
-import { ListCollegeNames } from '@/services/collegeService';
+import { ListCollegeNames, ListCourses } from '@/services/collegeService';
 import {
   AddBulkStudents,
   AddStudent as AddStudentApi,
@@ -27,6 +27,22 @@ const AddStudents: React.FC = (): React.JSX.Element => {
   const loadOptions = async () => {
     try {
       const response = await ListCollegeNames();
+      return {
+        options: response?.map((clg: string) => ({
+          label: clg,
+          value: clg,
+        })),
+        hasMore: false,
+      };
+    } catch (error) {
+      console.error('Failed to load options:', error);
+      return { options: [], hasMore: false };
+    }
+  };
+
+  const loadCourseOptions = async () => {
+    try {
+      const response = await ListCourses();
       return {
         options: response?.map((clg: string) => ({
           label: clg,
@@ -130,7 +146,7 @@ const AddStudents: React.FC = (): React.JSX.Element => {
           handleSubmit,
         }) => (
           <form
-            className="grid grid-cols-1 gap-4 gap-y-8 p-4 lg:grid-cols-2 overflow-auto flex-1"
+            className="grid grid-cols-1 gap-4 gap-y-8 p-4 lg:grid-cols-2 overflow-auto flex-1 auto-rows-min"
             onSubmit={handleSubmit}
           >
             <Input
@@ -186,15 +202,26 @@ const AddStudents: React.FC = (): React.JSX.Element => {
               value={{ label: values.college, value: values.college }}
               onChange={(e) => setFieldValue('college', e?.label)}
             />
-            <Input
-              label="Course"
-              name="course"
-              placeholder="Course"
-              labelPlacement="outside"
-              isInvalid={touched.course && !!errors.course}
-              value={values.course}
-              onChange={handleChange}
-              onBlur={handleBlur}
+            <AsyncSelect
+              label="Course Name*"
+              loadOptions={loadCourseOptions}
+              value={{ label: values.course, value: values.course }}
+              onChange={(e) =>
+                setFieldValue(
+                  'course_name',
+                  //@ts-ignore
+                  e?.map((course: OptionType) =>
+                    course.value
+                      ?.split(' ')
+                      .map(
+                        (word: string) =>
+                          word.charAt(0).toUpperCase() +
+                          word.slice(1).toLowerCase()
+                      )
+                      .join(' ')
+                  )
+                )
+              }
             />
 
             <div className="col-span-1 lg:col-span-2 flex items-center gap-3">

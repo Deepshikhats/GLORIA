@@ -63,7 +63,7 @@ const AsyncSelect: React.FC<AsyncSelectProps> = ({
         classNames={{
           menu: () => '!z-50 !text-small',
           control: () =>
-            `!border-0 !rounded-lg !shadow-none  ${isInvalid ? '!bg-red-100' : '!bg-default-100'} text-small !rounded-xl`,
+            `!border-0 !rounded-lg !shadow-none  ${isInvalid ? '!bg-red-100' : '!bg-default-100'} text-small !rounded-xl ${props.isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'} `,
           placeholder: () => '!text-base',
         }}
       />

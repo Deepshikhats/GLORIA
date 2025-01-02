@@ -14,6 +14,8 @@ const Accordion: React.FC<AccordionAppProps> = ({
   selectedItems = [],
   setSelectedItems,
 }) => {
+  console.log(selectedItems, 'sel');
+
   return (
     <AccordionApp variant="bordered" className="bg-white">
       {accOptions.map(({ label, iterables }, index: number) => (
